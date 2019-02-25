@@ -1,5 +1,5 @@
 
-DOCKER_REPO=sergii/foursquare-dataviz
+DOCKER_REPO=sergii/tf-ipynb
 TAG=latest
 # TODO: chart prefix
 CHART := tf-ipynb
@@ -14,8 +14,8 @@ build:
 
 .PHONY: run
 run:
-	docker run -i -t -p 80:80 \
-		-e FOURSQUARE_TOKEN=${FOURSQUARE_TOKEN} ${DOCKER_REPO}
+	docker run -it -p 8080:80 \
+		-e FOO=${BAR} ${DOCKER_REPO}
 
 .PHONY: push
 push:
