@@ -24,6 +24,7 @@ def download_file(requested_url: str) -> str:
 # TODO: return url
 def process_file(requested_url: str, force=False):
 
+    _, file_ext = os.path.splitext(requested_url)
     folder_hash = md5(requested_url.encode('utf-8')).hexdigest()
     path = f"/tmp/tft/{folder_hash}"
 
@@ -31,8 +32,10 @@ def process_file(requested_url: str, force=False):
         file_content = download_file(requested_url)
 
         os.mkdir(path)
-        with open(f"{path}/original", "w") as original_file:
+        with open(f"{path}/original{file_ext}", "w") as original_file:
             original_file.write(file_content)
+
+        # TODO: try to convert
 
 
 
