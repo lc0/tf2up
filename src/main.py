@@ -6,6 +6,11 @@ def hello():
     return "Hello World!"
 
 
+@app.route('/<path:path>')
+def catch_all(path):
+    return f"Original path is : {path}"
+
+
 if __name__ == "__main__":
     # bjoern.run(app, 0, 80)
     app.run(debug=True, host="0.0.0.0")

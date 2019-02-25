@@ -1,6 +1,6 @@
 
-DOCKER_REPO=sergii/tf-ipynb
-TAG=latest
+DOCKER_REPO=gcr.io/brainscode-140622/tf-ipynb
+TAG=v1
 # TODO: chart prefix
 CHART := tf-ipynb
 
@@ -19,7 +19,7 @@ run:
 
 .PHONY: push
 push:
-	docker push ${DOCKER_REPO}:${TAG}
+	gcloud docker -- push ${DOCKER_REPO}:${TAG}
 
 # TODO: add env here
 .PHONY: deploy
