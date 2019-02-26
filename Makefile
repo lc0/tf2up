@@ -28,6 +28,18 @@ deploy:
 	${HELM} upgrade --install ${CHART} ./${CHART} \
 		--debug
 
-.PHONY: deploy
+.PHONY: purge
 purge:
 	helm del --purge ${CHART}
+
+# ====== nbdime part
+
+.PHONY: nbbuild
+nbbuild:
+	docker build -t ${DOCKER_REPO}.nbdime:${TAG} -f Dockerfile.nbdime .
+
+.PHONY: nbrun
+nbrun:
+	docker run -it -p 8080:80 \
+		-v /tmp/tft:/notebooks \
+		-e FOO=${BAR} ${DOCKER_REPO}.nbdime:${TAG}
