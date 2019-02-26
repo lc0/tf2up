@@ -20,7 +20,7 @@ spec:
   {{- range .Values.ingress.tls }}
     - hosts:
       {{- range .hosts }}
-        - {{ . | quote }}
+        - {{ .name | quote }}
       {{- end }}
       secretName: {{ .secretName }}
   {{- end }}
@@ -33,7 +33,7 @@ spec:
 	{{- range $ingressPaths }}
           - path: {{ . }}
             backend:
-              serviceName: {{ $fullName }}
+              serviceName: {{ $fullName }}-{{ .service }}
               servicePort: http
 	{{- end }}
   {{- end }}
