@@ -23,6 +23,10 @@ service:
   type: NodePort
   port: 80
 
+services:
+  - name: ipynb
+  - name: nbdime
+
 ingress:
   enabled: true
   annotations:
