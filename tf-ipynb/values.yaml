@@ -2,12 +2,19 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-replicaCount: 1
 
-image:
-  repository: gcr.io/brainscode-140622/tf-ipynb
-  tag: v2
-  pullPolicy: Always
+
+tag: v2
+
+pods:
+  - name: ipynb
+    repository: gcr.io/brainscode-140622/tf-ipynb
+    pullPolicy: Always
+    replicaCount: 1
+  - name: nbdime
+    repository: gcr.io/brainscode-140622/tf-ipynb.nbdime
+    pullPolicy: Always
+    replicaCount: 1
 
 nameOverride: ""
 fullnameOverride: ""
