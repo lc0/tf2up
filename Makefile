@@ -1,6 +1,6 @@
 
 DOCKER_REPO=gcr.io/brainscode-140622/tf-ipynb
-TAG=v2
+TAG=v3
 # TODO: chart prefix
 CHART := tf-ipynb
 
@@ -26,7 +26,8 @@ push:
 deploy:
 	${HELM} lint ${CHART}
 	${HELM} upgrade --install ${CHART} ./${CHART} \
-		--debug
+		--debug \
+		--dry-run
 
 .PHONY: purge
 purge:
@@ -43,3 +44,7 @@ nbrun:
 	docker run -it -p 8080:80 \
 		-v /tmp/tft:/notebooks \
 		-e FOO=${BAR} ${DOCKER_REPO}.nbdime:${TAG}
+
+.PHONY: nbpush
+nbpush:
+	gcloud docker -- push ${DOCKER_REPO}.nbdime:${TAG}
