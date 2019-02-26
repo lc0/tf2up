@@ -9,4 +9,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY nbdime/original.ipynb .
 COPY nbdime/run.sh .
 
-CMD ["sh", "run.sh"]
+# CMD ["sh", "run.sh"]
+CMD ["python", "-m", "nbdime.webapp.nbdimeserver", "--port=80", "--ip=0.0.0.0", "--log-level=DEBUG"]

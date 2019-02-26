@@ -26,7 +26,7 @@ def process_file(requested_url: str, force=False):
 
     _, file_ext = os.path.splitext(requested_url)
     folder_hash = md5(requested_url.encode('utf-8')).hexdigest()
-    path = f"/tmp/tft/{folder_hash}"
+    path = f"/tmp/{folder_hash}"
 
     if not os.path.exists(path):
         file_content = download_file(requested_url)

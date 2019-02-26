@@ -4,17 +4,17 @@
 
 
 
-tag: v2
-
 pods:
   - name: ipynb
     repository: gcr.io/brainscode-140622/tf-ipynb
     pullPolicy: Always
     replicaCount: 1
-  - name: nbdime
-    repository: gcr.io/brainscode-140622/tf-ipynb.nbdime
-    pullPolicy: Always
-    replicaCount: 1
+    tag: v5
+  # - name: nbdime
+  #   repository: gcr.io/brainscode-140622/tf-ipynb.nbdime
+  #   pullPolicy: Always
+  #   replicaCount: 1
+  #   tag: v5
 
 nameOverride: ""
 fullnameOverride: ""
@@ -24,8 +24,8 @@ service:
   port: 80
 
 services:
+  # - name: nbdime
   - name: ipynb
-  - name: nbdime
 
 ingress:
   enabled: true
@@ -34,12 +34,12 @@ ingress:
     # kubernetes.io/tls-acme: "true"
     kubernetes.io/ingress.global-static-ip-name: "tf-ipynb-ip"
   paths:
-    - name: '/*'
+    # - path: '/d/*'
+    #   service: 'nbdime'
+    - path: '/*'
       service: 'ipynb'
-    - name: '/diff*'
-      service: 'nbdime'
+
   hosts:
-    - chart-example.local
     - tf2up.ml
   tls: []
   #  - secretName: chart-example-tls

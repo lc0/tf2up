@@ -1,6 +1,6 @@
 
 DOCKER_REPO=gcr.io/brainscode-140622/tf-ipynb
-TAG=v3
+TAG=v5
 # TODO: chart prefix
 CHART := tf-ipynb
 
@@ -26,8 +26,7 @@ push:
 deploy:
 	${HELM} lint ${CHART}
 	${HELM} upgrade --install ${CHART} ./${CHART} \
-		--debug \
-		--dry-run
+		--debug #--dry-run
 
 .PHONY: purge
 purge:

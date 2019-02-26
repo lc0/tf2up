@@ -31,7 +31,7 @@ spec:
       http:
         paths:
 	{{- range $ingressPaths }}
-          - path: {{ . }}
+          - path: {{ .path }}
             backend:
               serviceName: {{ $fullName }}-{{ .service }}
               servicePort: http

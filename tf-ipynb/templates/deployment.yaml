@@ -1,4 +1,5 @@
 {{- range .Values.pods }}
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -12,7 +13,7 @@ spec:
   replicas: {{ $.Values.replicaCount }}
   selector:
     matchLabels:
-      app.kubernetes.io/name: {{ include "tf-ipynb.name" $ }}
+      app.kubernetes.io/name: {{ include "tf-ipynb.name" $ }}-{{ .name }}
       app.kubernetes.io/instance: {{ $.Release.Name }}-{{ .name }}
   template:
     metadata:
@@ -22,7 +23,7 @@ spec:
     spec:
       containers:
         - name: {{ $.Chart.Name }}
-          image: "{{ .repository }}:{{ $.Values.tag }}"
+          image: "{{ .repository }}:{{ .tag }}"
           imagePullPolicy: {{ .pullPolicy }}
           ports:
             - name: http
