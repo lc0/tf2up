@@ -18,4 +18,5 @@ spec:
   selector:
     app.kubernetes.io/name: {{ include "tf-ipynb.name" $ }}-{{ .name }}
     app.kubernetes.io/instance: {{ $.Release.Name }}-{{ .name }}
+---
 {{- end -}}
