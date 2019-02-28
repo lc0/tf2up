@@ -36,7 +36,6 @@ ingress:
   paths:
     - path: '/d/*'
       service: nbdime
-      # service: ipynb
     - path: '/*'
       service: ipynb
 

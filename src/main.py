@@ -1,6 +1,7 @@
 """Simple wrapper to upgrade the files by github URL"""
 
 import os
+import urllib
 
 import requests
 
@@ -42,6 +43,18 @@ def process_file(requested_url: str, force=False):
 @app.route("/")
 def hello():
     return "Hello World!"
+
+
+@app.route("/d/<path:path>")
+def proxy(path):
+    """Proxy request on python side"""
+
+    base = "http://127.0.0.1:63652/d/"
+    url = f"{base}{path}"
+    response = urllib.request.urlopen(url)
+
+    return response.read()
+
 
 # TODO force refresh
 @app.route('/<path:path>')
