@@ -49,15 +49,19 @@ def hello():
 def proxy(path):
     """Proxy request on python side"""
 
-    base = "http://127.0.0.1:63652/d/"
+    # base = "http://127.0.0.1:63652/d/"
+    base = "http://localhost:81/d/"
     url = f"{base}{path}"
-    response = urllib.request.urlopen(url)
 
-    return response.read()
+    try:
+        response = urllib.request.urlopen(url)
+        return response.read()
+    except urllib.error.URLError:
+        return "Something went wrong, can not proxy"
 
 
 # TODO force refresh
-@app.route('/<path:path>')
+@app.route('/(?)<path:path>')
 def catch_all(path):
 
     # TODO: proper status codes

@@ -3,18 +3,24 @@
 # Declare variables to be passed into your templates.
 
 
-
 pods:
+  - name: ipynb
+
+containers:
   - name: ipynb
     repository: gcr.io/brainscode-140622/tf-ipynb
     pullPolicy: Always
     replicaCount: 1
-    tag: v5
+    port: 80
+    tag: v24
+
   - name: nbdime
     repository: gcr.io/brainscode-140622/tf-ipynb.nbdime
     pullPolicy: Always
     replicaCount: 1
-    tag: v20
+    port: 81
+    tag: v22
+
 
 nameOverride: ""
 fullnameOverride: ""
@@ -24,7 +30,6 @@ service:
   port: 80
 
 services:
-  - name: nbdime
   - name: ipynb
 
 ingress:
@@ -34,8 +39,8 @@ ingress:
     # kubernetes.io/tls-acme: "true"
     kubernetes.io/ingress.global-static-ip-name: "tf-ipynb-ip"
   paths:
-    - path: '/d/*'
-      service: nbdime
+    # - path: '/d/*'
+    #   service: nbdime
     - path: '/*'
       service: ipynb
 

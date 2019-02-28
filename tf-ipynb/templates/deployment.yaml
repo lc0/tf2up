@@ -1,5 +1,4 @@
 {{- range .Values.pods }}
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -22,12 +21,13 @@ spec:
         app.kubernetes.io/instance: {{ $.Release.Name }}-{{ .name }}
     spec:
       containers:
-        - name: {{ $.Chart.Name }}
+{{- range $.Values.containers }}
+        - name: {{ $.Chart.Name }}-{{ .name }}
           image: "{{ .repository }}:{{ .tag }}"
           imagePullPolicy: {{ .pullPolicy }}
           ports:
             - name: http
-              containerPort: 80
+              containerPort: {{ .port }}
               protocol: TCP
           # livenessProbe:
           #   httpGet:
@@ -39,6 +39,7 @@ spec:
           #     port: http
           resources:
             {{- toYaml $.Values.resources | nindent 12 }}
+{{- end }}
       {{- with $.Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

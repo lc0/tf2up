@@ -1,6 +1,6 @@
 
 DOCKER_REPO=gcr.io/brainscode-140622/tf-ipynb
-TAG=v20
+TAG=v24
 # TODO: chart prefix
 CHART := tf-ipynb
 
@@ -40,7 +40,7 @@ nbbuild:
 
 .PHONY: nbrun
 nbrun:
-	docker run -it -p 8080:80 \
+	docker run -it -p 8080:81 \
 		-v /tmp/tft:/notebooks \
 		-e FOO=${BAR} ${DOCKER_REPO}.nbdime:${TAG}
 
