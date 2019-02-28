@@ -15,6 +15,7 @@ build:
 .PHONY: run
 run:
 	docker run -it -p 8080:80 \
+		-v /tmp/notebooks:/notebooks \
 		-e FOO=${BAR} ${DOCKER_REPO}:${TAG}
 
 .PHONY: push

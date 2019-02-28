@@ -10,6 +10,9 @@ from hashlib import md5
 from flask import Flask, redirect, request
 app = Flask(__name__)
 
+NBDIME_URL = "http://localhost:81/d/"
+# NBDIME_URL = "http://127.0.0.1:64533/d/"
+
 def download_file(requested_url: str) -> str:
     """Download a file from github repository"""
 
@@ -23,24 +26,41 @@ def download_file(requested_url: str) -> str:
 
     return resp.text
 
+
+def convert_file(in_file, out_file):
+    comand = f"tf_upgrade_v2 --infile {in_file} --outfile {out_file}"
+
+    import subprocess
+
+    p = subprocess.Popen(comand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    result = p.stdout.readlines()
+    p.wait()
+
+    print(result)
+
 # TODO: return url
 def process_file(requested_url: str, force=False):
 
     _, file_ext = os.path.splitext(requested_url)
     folder_hash = md5(requested_url.encode('utf-8')).hexdigest()
+
     path = f"/notebooks/{folder_hash}"
+    original = f"original{file_ext}"
+    converted = f"converted{file_ext}"
 
     if not os.path.exists(path):
         file_content = download_file(requested_url)
 
         os.mkdir(path)
-        with open(f"{path}/original{file_ext}", "w") as original_file:
+        with open(f"{path}/{original}", "w") as original_file:
             original_file.write(file_content)
 
         # TODO: try to convert
-        converted = f"converted{file_ext}"
 
-    return path, (f"original{file_ext}", converted)
+
+        convert_file(f"{path}/{original}", f"{path}/{converted}")
+
+    return path, (original, converted)
 
 
 
@@ -53,10 +73,7 @@ def hello():
 def proxy(path):
     """Proxy request on python side"""
     additional_params = '&'.join([f"{k}={v}" for k,v in request.values.items()])
-
-    # base = "http://127.0.0.1:52774/d/"
-    base = "http://localhost:81/d/"
-    url = f"{base}{path}?{additional_params}"
+    url = f"{NBDIME_URL}{path}?{additional_params}"
 
     print(f"URL: {url}")
 
@@ -70,9 +87,7 @@ def proxy(path):
 @app.route("/d/<path:path>", methods=['POST'])
 def proxy_api(path):
     """Proxy request on python side"""
-    # base = "http://127.0.0.1:52774/d/"
-    base = "http://localhost:81/d/"
-    url = f"{base}{path}"
+    url = f"{NBDIME_URL}{path}"
 
     try:
         payload = json.dumps(request.json).encode()
