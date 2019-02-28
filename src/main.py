@@ -54,8 +54,8 @@ def proxy(path):
     """Proxy request on python side"""
     additional_params = '&'.join([f"{k}={v}" for k,v in request.values.items()])
 
-    base = "http://127.0.0.1:52774/d/"
-    # base = "http://localhost:81/d/"
+    # base = "http://127.0.0.1:52774/d/"
+    base = "http://localhost:81/d/"
     url = f"{base}{path}?{additional_params}"
 
     print(f"URL: {url}")

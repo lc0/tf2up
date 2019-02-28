@@ -1,6 +1,6 @@
 
 DOCKER_REPO=gcr.io/brainscode-140622/tf-ipynb
-TAG=v31
+TAG=v33
 # TODO: chart prefix
 CHART := tf-ipynb
 
