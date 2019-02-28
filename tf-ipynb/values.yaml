@@ -2,6 +2,8 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# TODO: volumes
+# TODO: healthchecks
 
 pods:
   - name: ipynb
@@ -12,7 +14,7 @@ containers:
     pullPolicy: Always
     replicaCount: 1
     port: 80
-    tag: v24
+    tag: v31
 
   - name: nbdime
     repository: gcr.io/brainscode-140622/tf-ipynb.nbdime

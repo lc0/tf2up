@@ -1,6 +1,6 @@
 
 DOCKER_REPO=gcr.io/brainscode-140622/tf-ipynb
-TAG=v24
+TAG=v31
 # TODO: chart prefix
 CHART := tf-ipynb
 
@@ -15,7 +15,7 @@ build:
 .PHONY: run
 run:
 	docker run -it -p 8080:80 \
-		-e FOO=${BAR} ${DOCKER_REPO}
+		-e FOO=${BAR} ${DOCKER_REPO}:${TAG}
 
 .PHONY: push
 push:

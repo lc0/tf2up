@@ -20,11 +20,18 @@ spec:
         app.kubernetes.io/name: {{ include "tf-ipynb.name" $ }}-{{ .name }}
         app.kubernetes.io/instance: {{ $.Release.Name }}-{{ .name }}
     spec:
+      volumes:
+      - name: notebooks
+        emptyDir: {}
       containers:
 {{- range $.Values.containers }}
         - name: {{ $.Chart.Name }}-{{ .name }}
           image: "{{ .repository }}:{{ .tag }}"
           imagePullPolicy: {{ .pullPolicy }}
+          volumeMounts:
+          - name: notebooks
+            mountPath: /notebooks
+
           ports:
             - name: http
               containerPort: {{ .port }}
