@@ -1,6 +1,5 @@
 FROM python:3
 
-
 WORKDIR /usr/src
 
 COPY nbdime/requirements.txt ./
@@ -9,21 +8,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY nbdime/original.ipynb .
 COPY nbdime/run.sh .
 
-ENV JUPYTER_CONFIG_DIR /root/.jupyter/
-RUN mkdir -p /root/.jupyter/
-COPY nbdime/jupyter_notebook_config.py /root/.jupyter/.
-COPY nbdime/jupyter_notebook_config.json /root/.jupyter/.
-COPY nbdime/nbdime.json /usr/local/etc/jupyter/jupyter_notebook_config.d/nbdime.json
-COPY nbdime/nbdime.json /root/.jupyter/nbdime.json
 COPY nbdime/hack.py .
 
 
-RUN ls -la /root/.jupyter/
-# RUN cat /root/.jupyter/jupyter_notebook_config.py
-
-
-# CMD ["sh", "run.sh"]
 #CMD ["python", "-m", "nbdime.webapp.nbdimeserver", "--port=80", "--ip=0.0.0.0", "--log-level=DEBUG", "--base-url=/d/", "--config=/root/.jupyter/nbdime.json"]
 CMD ["python", "hack.py"]
-# CMD ["jupyter", "notebook", "--port=81", "--ip=0.0.0.0", "--no-browser", "--allow-root"]
-# CMD ["/bin/bash"]
