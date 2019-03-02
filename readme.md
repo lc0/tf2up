@@ -1,4 +1,4 @@
-[tf2up.ml](http://tf2up.ml) - TensorFlow 2.0 upgrader service, even easier upgrade to TensorFlow 2.0
+[tf2up.ml](http://tf2up.ml) - TensorFlow 2.0 upgrader service
 ===
 Idea is to make upgrade process to <strong>TensorFlow</strong> 2.0 of your Jupyter notebooks even easier!<br>
 
