@@ -1,5 +1,5 @@
 {
-    "name": "tf2up.ml - TensorFlow 2.0 Converter service, even easier conversion to TensorFlow 2.0",
+    "name": "tf2up.ml - TensorFlow 2.0 upgrader service, even easier upgrade to TensorFlow 2.0",
     "short_name": "tf2up.ml",
     "icons": [
         {
