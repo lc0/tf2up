@@ -20,6 +20,7 @@ For example, you would like to upgrade
 <code class="scrollable">http://github.com/tensorflow/docs/blob/master/site/en/tutorials/keras/save_and_restore_models.ipynb</code>
 you would need to replace url to
 <code class="scrollable">http://tf2up.ml/tensorflow/docs/blob/master/site/en/tutorials/keras/save_and_restore_models.ipynb</code>
+<a href="http://tf2up.ml/tensorflow/docs/blob/master/site/en/tutorials/keras/save_and_restore_models.ipynb">Example</a></a>
 
 <h4><a href="#bookmarklet">Bookmarklet</a></h4>
 Alternatively, you can simply use a <a href="https://en.wikipedia.org/wiki/Bookmarklet">Bookmarklet</a> for this.
@@ -31,15 +32,15 @@ You can manually add a bookmarklet based on the code below. Just encode the code
 javascript:(function(){window.open(window.location.toString().replace(/.*github\.com\/(.*)/,'http://tf2up.ml/\$1'));})()
 </code>
 
-Now, once you visit a github page with <code>ipynb</code> notebook, you can just click on bookmarklet.
-Next you are going to be redirected to page with diff
+Now, once you visit a GitHub repository with <code>ipynb</code> notebook, you can just click on the bookmarklet.<br>
+Next, you are going to be redirected to page with a diff, showing difference between original notebooks and a converted one.
 
 <h2><a href="#demo">Demo</a></h2>
 <img id="demo" src="https://camo.githubusercontent.com/82231f37f147fc4ee392bac01c627ed93b1aa6a0/687474703a2f2f672e7265636f726469742e636f2f706232307a38726b59302e676966" >
 
 
 <h2><a href="#how-it-works">How it works</a></h2>
-This project is standing on shoulders of giants:
+This project is standing on the shoulders of giants:
 <ul>
     <li> TensorFlow's <a href="https://github.com/tensorflow/tensorflow/tree/master/tensorflow/tools/compatibility">tf_upgrade_v2</a> with brand new support of <a href="https://github.com/tensorflow/tensorflow/pull/25680">inline jupyter notebook conversion</a></li>
     <li><a href="https://github.com/jupyter/nbdime">nbdime</a> for generating nice diffs for before and after</li>
