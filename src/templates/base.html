@@ -1,0 +1,18 @@
+<!doctype html>
+<title>{% block title %}{% endblock %} - tf2up.ml</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+<nav>
+  <h1>tf2up.ml</h1>
+  <!-- <ul>
+    <li></li>
+  </ul> -->
+</nav>
+<section class="content">
+  <header>
+    {% block header %}{% endblock %}
+  </header>
+  {% for message in get_flashed_messages() %}
+    <div class="flash">{{ message }}</div>
+  {% endfor %}
+  {% block content %}{% endblock %}
+</section>
