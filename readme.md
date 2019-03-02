@@ -1,5 +1,6 @@
-Amazing project to show the ease of migration
+[tf2up.ml](http://tf2up.ml) - TensorFlow 2.0 upgrader service, even easier upgrade to TensorFlow 2.0
 ===
+Idea is to make upgrade process to <strong>TensorFlow</strong> 2.0 of your Jupyter notebooks even easier!<br>
 
 Bookmarklet
 ===
@@ -10,6 +11,13 @@ javascript:(function(){ window.open(window.location.toString().replace(/.*github
 Demo
 ===
 ![](http://g.recordit.co/pb20z8rkY0.gif)
+
+How it works
+===
+This project is standing on the shoulders of giants:
+- TensorFlow's [tf_upgrade_v2](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/tools/compatibility) with brand new support of [inline jupyter notebook conversion](https://github.com/tensorflow/tensorflow/pull/25680)
+- [nbdime](https://github.com/jupyter/nbdime) for generating nice diffs for before and after
+- [Kubernetes + Helm](https://kubernetes.io/) for deploying this tiny service
 
 
 Kudos
