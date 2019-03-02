@@ -10,16 +10,27 @@ TensorFlow 2.0 Converter service - easy TensorFlow conversion to 2.0
 
 {% block content %}
 <h2>Idea</h2>
-Idea is to make conversion to <strong>TensorFlow</strong> 2.0 of your Jupyter notebooks even easier ;) <br>
+Idea is to make upgrade process to <strong>TensorFlow</strong> 2.0 of your Jupyter notebooks even easier ;) <br>
 
-Started as a coversation on twitter:
-<blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">I mean ipynb has json structure. Do you feel we should extend the converter? I am happy to contribute :)</p>&mdash; Sergii @ 🔜 #TFDevSummit (@lc0d3r) <a href="https://twitter.com/lc0d3r/status/1087479011654156293?ref_src=twsrc%5Etfw">January 21, 2019</a></blockquote>
+Started as a conversation on Twitter:
+
+<blockquote class="twitter-tweet tw-align-center" data-lang="en"><p lang="en" dir="ltr">I mean ipynb has json structure. Do you feel we should extend the converter? I am happy to contribute :)</p>&mdash; Sergii @ 🔜 #TFDevSummit (@lc0d3r) <a href="https://twitter.com/lc0d3r/status/1087479011654156293?ref_src=twsrc%5Etfw">January 21, 2019</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 
-<h2>How</h2>
-We use <code>tf_upgrade_v2</code> with <a href="https://github.com/tensorflow/tensorflow/pull/25680">brand new support</a> of inline jupyter notebook conversion.
+<h2>How it works</h2>
+We use <code>tf_upgrade_v2</code> with brand new support of <a href="https://github.com/tensorflow/tensorflow/pull/25680">inline jupyter notebook conversion</a>.
 
 <h2>Demo</h2>
   <img id="demo" src="https://camo.githubusercontent.com/82231f37f147fc4ee392bac01c627ed93b1aa6a0/687474703a2f2f672e7265636f726469742e636f2f706232307a38726b59302e676966" >
+
+<h2>Kudos</h2>
+Thanks to all amazing people, that in one or another way helped this project:
+<ul>
+    <li><a href="https://twitter.com/DynamicWebPaige">@DynamicWebPaige</a> for supporting and making TF community awesome</li>
+    <li><a href="https://twitter.com/martin_wicke">Martin Wicke</a> for TF2, cake, and feedback</li>
+    <li><a href="https://twitter.com/jerrykur">Jerry Kurata</a> for testing the early versions of the converter</li>
+
+</ul>
 {% endblock %}
+
