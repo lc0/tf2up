@@ -7,7 +7,7 @@ import urllib
 import requests
 
 from hashlib import md5
-from flask import Flask, redirect, request
+from flask import Flask, redirect, request, render_template
 app = Flask(__name__)
 
 NBDIME_URL = "http://localhost:81/d/"
@@ -55,9 +55,6 @@ def process_file(requested_url: str, force=False):
         with open(f"{path}/{original}", "w") as original_file:
             original_file.write(file_content)
 
-        # TODO: try to convert
-
-
         convert_file(f"{path}/{original}", f"{path}/{converted}")
 
     return path, (original, converted)
@@ -66,7 +63,7 @@ def process_file(requested_url: str, force=False):
 
 @app.route("/")
 def hello():
-    return "Hello World!"
+    return render_template('index.html')
 
 
 @app.route("/d/<path:path>", methods=['GET'])
