@@ -5,7 +5,7 @@ tf2up.ml - TensorFlow 2.0 Converter service, even easier conversion to TensorFlo
 {% endblock %}
 
 {% block content %}
-<h2>Idea</h2>
+<h2><a href="#idea">Idea</a></h2>
 Idea is to make upgrade process to <strong>TensorFlow</strong> 2.0 of your Jupyter notebooks even easier!<br>
 
 Started as a conversation on Twitter:
@@ -14,16 +14,17 @@ Started as a conversation on Twitter:
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 
-<h2>How</h2>
+<h2><a href="#how">How</a></h2>
 Just replace <code>https://github.com/</code> with <code>http://tf2up.ml</code>.
 For example, you would like to convert
 <code class="scrollable">http://github.com/tensorflow/docs/blob/master/site/en/tutorials/keras/save_and_restore_models.ipynb</code>
 you would need to replace url to
 <code class="scrollable">http://tf2up.ml/tensorflow/docs/blob/master/site/en/tutorials/keras/save_and_restore_models.ipynb</code>
 
-<h4>Bookmarklet</h4>
+<h4><a href="#bookmarklet">Bookmarklet</a></h4>
 Alternatively, you can simply use a <a href="https://en.wikipedia.org/wiki/Bookmarklet">Bookmarklet</a> for this.
-Feel free to drag this one 👉 <a id="bookmarklet" href="javascript:(function()%7Bwindow.open(window.location.toString().replace(%2F.*github%5C.com%5C%2F(.*)%2F%2C'http%3A%2F%2Ftf2up.ml%2F%5C%241'))%7D)()">TF2up</a>
+
+Feel free to drag this one 👉 <a id="bookmarklet" href="javascript:(function()%7Bwindow.open(window.location.toString().replace(%2F.*github%5C.com%5C%2F(.*)%2F%2C'http%3A%2F%2Ftf2up.ml%2F%5C%241'))%7D)()">TF2up</a><br>
 
 You can manually add a bookmarklet based on the code below. Just encode the code with <code>encodeURI</code> in your browser console.
 <code class="scrollable">
@@ -33,11 +34,11 @@ javascript:(function(){window.open(window.location.toString().replace(/.*github\
 Now, once you visit a github page with <code>ipynb</code> notebook, you can just click on bookmarklet.
 Next you are going to be redirected to page with diff
 
-<h2>Demo</h2>
+<h2><a href="#demo">Demo</a></h2>
 <img id="demo" src="https://camo.githubusercontent.com/82231f37f147fc4ee392bac01c627ed93b1aa6a0/687474703a2f2f672e7265636f726469742e636f2f706232307a38726b59302e676966" >
 
 
-<h2>How it works</h2>
+<h2><a href="#how-it-works">How it works</a></h2>
 This project is standing on shoulders of giants:
 <ul>
     <li> TensorFlow's <a href="https://github.com/tensorflow/tensorflow/tree/master/tensorflow/tools/compatibility">tf_upgrade_v2</a> with brand new support of <a href="https://github.com/tensorflow/tensorflow/pull/25680">inline jupyter notebook conversion</a></li>
@@ -46,7 +47,7 @@ This project is standing on shoulders of giants:
 </ul>
 
 
-<h2>Kudos</h2>
+<h2><a href="#kudos">Kudos</a></h2>
 Thanks to all amazing people, that in one or another way helped this project:
 <ul>
     <li><a href="https://twitter.com/DynamicWebPaige">@DynamicWebPaige</a> for supporting and making TF community awesome</li>
