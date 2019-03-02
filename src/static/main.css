@@ -15,3 +15,13 @@ nav ul li a, nav ul li span, header .action { display: block; padding: 0.5rem; }
 
 
 #demo {width: 930px; margin: 1em 0 0 0;}
+.scrollable {display:block; width: 900px; overflow-x: scroll; background: #cae6f6; margin: 1em; padding: 1em 0.25em}
+#bookmarklet{
+        background-color: white;
+        padding: 0.25em 0.25em;
+        /* text-decoration: underline overline dotted red; */
+        /* text-transform: uppercase; */
+        color: #039be5;
+        -webkit-box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px;
+        box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px
+}
