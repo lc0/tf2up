@@ -20,6 +20,24 @@ This project is standing on the shoulders of giants:
 - [Kubernetes + Helm](https://kubernetes.io/) for deploying this tiny service
 
 
+Contributing
+===
+In order run run locally:
+
+Main part: we need to build docker image and run with local `NBDIME_URL`
+```sh
+make build -e
+```
+Start nbdime container in a separate terminal
+```sh
+make nbrun
+```
+Now you can run docker image with
+```sh
+make run NBDIME_URL=http://host.docker.internal:8081/d/
+```
+
+
 Kudos
 ===
 Thanks to all amazing people, that in one or another way helped this project:

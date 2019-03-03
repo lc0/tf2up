@@ -1,6 +1,7 @@
 
 DOCKER_REPO=gcr.io/brainscode-140622/tf-ipynb
 TAG=v34
+NBDIME_URL=http://localhost:81/d/
 # TODO: chart prefix
 CHART := tf-ipynb
 
@@ -9,14 +10,14 @@ HELM := $(shell which helm)
 
 
 .PHONY: build
-build: lint
+build: #lint
 	docker build -t ${DOCKER_REPO}:${TAG} .
 
 .PHONY: run
 run:
 	docker run -it -p 8080:80 \
 		-v /tmp/notebooks:/notebooks \
-		-e FOO=${BAR} ${DOCKER_REPO}:${TAG}
+		-e NBDIME_URL=${NBDIME_URL} ${DOCKER_REPO}:${TAG}
 
 .PHONY: push
 push:
@@ -41,8 +42,8 @@ nbbuild:
 
 .PHONY: nbrun
 nbrun:
-	docker run -it -p 8080:81 \
-		-v /tmp/tft:/notebooks \
+	docker run -it -p 8081:81 \
+		-v /tmp/notebooks:/notebooks \
 		-e FOO=${BAR} ${DOCKER_REPO}.nbdime:${TAG}
 
 .PHONY: nbpush
