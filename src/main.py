@@ -2,24 +2,28 @@
 
 import json
 import os
+import re
+import shutil
+import subprocess
 import urllib
+
+from hashlib import md5
+from typing import Tuple, List
 
 import requests
 
-from hashlib import md5
 from flask import Flask, redirect, request, render_template
 app = Flask(__name__)
 
-NBDIME_URL = "http://localhost:81/d/"
-# NBDIME_URL = "http://127.0.0.1:64533/d/"
+Summary = List[str]
+
 
 def download_file(requested_url: str) -> str:
     """Download a file from github repository"""
 
     url = f"https://github.com/{requested_url.replace('blob', 'raw')}"
     resp = requests.get(url)
-    print(requested_url)
-    print(resp.status_code)
+    print(F"Requested URR: {requested_url}")
 
     if resp.status_code != 200:
         raise ValueError
@@ -27,92 +31,150 @@ def download_file(requested_url: str) -> str:
     return resp.text
 
 
-def convert_file(in_file, out_file):
+def convert_file(in_file: str, out_file: str) -> List[str]:
+    """Upgrade file with tf_upgrade_v2."""
+
     comand = f"tf_upgrade_v2 --infile {in_file} --outfile {out_file}"
 
-    import subprocess
-
-    p = subprocess.Popen(comand, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    result = p.stdout.readlines()
+    p = subprocess.Popen(comand,
+                         shell=True,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.STDOUT)
+    result_bytes = p.stdout.readlines()
     p.wait()
 
-    print(result)
+    result = [line.decode('utf-8') for line in result_bytes]
+    return result
 
-# TODO: return url
-def process_file(requested_url: str, force=False):
 
-    _, file_ext = os.path.splitext(requested_url)
-    folder_hash = md5(requested_url.encode('utf-8')).hexdigest()
+def process_file(file_url: str, force=False) -> Tuple[str, Tuple[str, str], Summary]:
+    """Process file with download, cache and upgrade."""
+
+    _, file_ext = os.path.splitext(file_url)
+    folder_hash = md5(file_url.encode('utf-8')).hexdigest()
 
     path = f"/notebooks/{folder_hash}"
     original = f"original{file_ext}"
     converted = f"converted{file_ext}"
 
+    # TODO: delete the folder completely if `force`
+
     if not os.path.exists(path):
-        file_content = download_file(requested_url)
+        file_content = download_file(file_url)
 
         os.mkdir(path)
         with open(f"{path}/{original}", "w") as original_file:
             original_file.write(file_content)
 
-        convert_file(f"{path}/{original}", f"{path}/{converted}")
+        output = convert_file(f"{path}/{original}", f"{path}/{converted}")
+        with open(f"{path}/output", "w") as summary_output:
+            summary_output.write('\n'.join(output))
 
-    return path, (original, converted)
+        shutil.copy('report.txt', f"{path}/report")
 
+    else:
+        with open(f"{path}/output") as summary_output:
+            output = summary_output.readlines()
+
+    return path, (original, converted), output
+
+
+def inject_nbdime(content: str, folder_hash: str) -> str:
+    """Inject report strings before `nbdime`' diff"""
+    replace_token = "<h3>Notebook Diff</h3>"
+    position = content.find(replace_token)
+
+    if position != -1:
+        path = f"/notebooks/{folder_hash}"
+        with open(f"{path}/report") as summary_output:
+            report_lines = [line for line in summary_output.readlines()
+                            if line.strip() != '']
+
+        return render_template("nbdime_inject.html",
+                               before=content[:position],
+                               report_lines=report_lines,
+                               after=content[position:])
+    else:
+        return content
 
 
 @app.route("/")
 def hello():
+    """Index page with intro info."""
     return render_template('index.html')
 
 
 @app.route("/d/<path:path>", methods=['GET'])
 def proxy(path):
-    """Proxy request on python side"""
-    additional_params = '&'.join([f"{k}={v}" for k,v in request.values.items()])
-    url = f"{NBDIME_URL}{path}?{additional_params}"
+    """Proxy request to index of `nbdime`"""
+
+    nbdime_url = os.environ.get('NBDIME_URL')
+    params = '&'.join([f"{k}={v}" for k, v in request.values.items()])
+    url = f"{nbdime_url}{path}?{params}"
 
     print(f"URL: {url}")
 
     try:
         response = urllib.request.urlopen(url)
-        return response.read()
-    except urllib.error.URLError:
+        content = response.read()
+
+        if b'notebooks' in content:
+            folder_hash = re.findall(r"/notebooks\/([^\/]+)/", url)[0]
+            content = inject_nbdime(content.decode('utf-8'), folder_hash)
+            return content
+        else:
+            return content
+
+    except urllib.error.URLError as error:
+        print(f"ERROR {error}")
         return "Something went wrong, can not proxy"
 
 
 @app.route("/d/<path:path>", methods=['POST'])
 def proxy_api(path):
-    """Proxy request on python side"""
-    url = f"{NBDIME_URL}{path}"
+    """Proxy request to `nbdime` API"""
+
+    nbdime_url = os.environ.get('NBDIME_URL')
+    url = f"{nbdime_url}{path}"
 
     try:
         payload = json.dumps(request.json).encode()
-        req =  urllib.request.Request(url, data=payload, headers={'content-type': 'application/json'}) # this will make the method "POST"
+        headers = {'content-type': 'application/json'}
+
+        req = urllib.request.Request(url,
+                                     data=payload,
+                                     headers=headers)
         resp = urllib.request.urlopen(req)
 
         return resp.read()
+
     except urllib.error.URLError:
         return "Something went wrong, can not proxy"
+
 
 # TODO force refresh
 @app.route('/<path:path>')
 def catch_all(path):
+    """Endpoint for all URLs from Github"""
 
     # TODO: proper status codes
     if not (path.endswith('.py') or path.endswith('.ipynb')):
         return "Currently we only support `.py` and `.ipynb` files."
 
     try:
-        folder, files = process_file(path)
+        folder, files, summary = process_file(path)
+
+        if 'ERROR' in summary:
+            print('='*10, 'ERROR!')
+        for line in summary:
+            print(line)
 
         url = f"/d/diff?base={folder}/{files[0]}&remote={folder}/{files[1]}"
         print(url)
         return redirect(url, code=302)
 
     except ValueError:
-        return "Can not download the file :( . Are you sure the url is correct?"
-
+        return "Can not download the file :( Are you sure the URL is correct?"
 
 
 if __name__ == "__main__":

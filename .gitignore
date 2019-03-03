@@ -1,2 +1,4 @@
 .DS_Store
 cluster_setup/
+.mypy_cache/
+.vscode/
