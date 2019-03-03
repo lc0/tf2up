@@ -5,17 +5,13 @@ import os
 import subprocess
 import urllib
 
-import requests
-
-from collections import namedtuple
 from hashlib import md5
 from typing import Tuple, List
 
+import requests
+
 from flask import Flask, redirect, request, render_template
 app = Flask(__name__)
-
-NBDIME_URL = "http://localhost:81/d/"
-# NBDIME_URL = "http://127.0.0.1:64533/d/"
 
 Summary = List[str]
 
@@ -59,7 +55,7 @@ def process_file(file_url: str, force=False) -> Tuple[str, Tuple[str, str], Summ
     original = f"original{file_ext}"
     converted = f"converted{file_ext}"
 
-    if not os.path.exists(path):
+    if not os.path.exists(path) or force:
         file_content = download_file(file_url)
 
         os.mkdir(path)
@@ -85,10 +81,11 @@ def hello():
 
 @app.route("/d/<path:path>", methods=['GET'])
 def proxy(path):
-    """Proxy request on python side"""
+    """Proxy request to index of `nbdime`"""
 
+    nbdime_url = os.environ.get('NBDIME_URL')
     params = '&'.join([f"{k}={v}" for k, v in request.values.items()])
-    url = f"{NBDIME_URL}{path}?{params}"
+    url = f"{nbdime_url}{path}?{params}"
 
     print(f"URL: {url}")
 
@@ -101,8 +98,10 @@ def proxy(path):
 
 @app.route("/d/<path:path>", methods=['POST'])
 def proxy_api(path):
-    """Proxy request on python side"""
-    url = f"{NBDIME_URL}{path}"
+    """Proxy request to `nbdime` API"""
+
+    nbdime_url = os.environ.get('NBDIME_URL')
+    url = f"{nbdime_url}{path}"
 
     try:
         payload = json.dumps(request.json).encode()
@@ -121,6 +120,7 @@ def proxy_api(path):
 # TODO force refresh
 @app.route('/<path:path>')
 def catch_all(path):
+    """Endpoint for all URLs from Github"""
 
     # TODO: proper status codes
     if not (path.endswith('.py') or path.endswith('.ipynb')):

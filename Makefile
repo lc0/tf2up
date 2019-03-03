@@ -53,3 +53,4 @@ nbpush:
 .PHONY: lint
 lint:
 	mypy --config-file=configs/mypy.ini src/main.py
+	pylint src/main.py
