@@ -2,6 +2,7 @@
 
 import json
 import os
+import shutil
 import subprocess
 import urllib
 
@@ -39,9 +40,10 @@ def convert_file(in_file: str, out_file: str) -> List[str]:
                          shell=True,
                          stdout=subprocess.PIPE,
                          stderr=subprocess.STDOUT)
-    result = p.stdout.readlines()
+    result_bytes = p.stdout.readlines()
     p.wait()
 
+    result = [line.decode('utf-8') for line in result_bytes]
     return result
 
 
@@ -55,7 +57,9 @@ def process_file(file_url: str, force=False) -> Tuple[str, Tuple[str, str], Summ
     original = f"original{file_ext}"
     converted = f"converted{file_ext}"
 
-    if not os.path.exists(path) or force:
+    # TODO: delete the folder completely if `force`
+
+    if not os.path.exists(path):
         file_content = download_file(file_url)
 
         os.mkdir(path)
@@ -65,6 +69,8 @@ def process_file(file_url: str, force=False) -> Tuple[str, Tuple[str, str], Summ
         output = convert_file(f"{path}/{original}", f"{path}/{converted}")
         with open(f"{path}/output", "w") as summary_output:
             summary_output.write('\n'.join(output))
+
+        shutil.copy('report.txt', f"{path}/report")
 
     else:
         with open(f"{path}/output") as summary_output:
@@ -92,7 +98,8 @@ def proxy(path):
     try:
         response = urllib.request.urlopen(url)
         return response.read()
-    except urllib.error.URLError:
+    except urllib.error.URLError as error:
+        print(f"ERROR {error}")
         return "Something went wrong, can not proxy"
 
 
