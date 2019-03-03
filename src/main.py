@@ -7,6 +7,7 @@ import urllib
 
 import requests
 
+from collections import namedtuple
 from hashlib import md5
 from typing import Tuple, List
 
@@ -15,6 +16,8 @@ app = Flask(__name__)
 
 NBDIME_URL = "http://localhost:81/d/"
 # NBDIME_URL = "http://127.0.0.1:64533/d/"
+
+Summary = List[str]
 
 
 def download_file(requested_url: str) -> str:
@@ -43,11 +46,10 @@ def convert_file(in_file: str, out_file: str) -> List[str]:
     result = p.stdout.readlines()
     p.wait()
 
-    print(result)
     return result
 
 
-def process_file(file_url: str, force=False) -> Tuple[str, Tuple[str, str]]:
+def process_file(file_url: str, force=False) -> Tuple[str, Tuple[str, str], Summary]:
     """Process file with download, cache and upgrade."""
 
     _, file_ext = os.path.splitext(file_url)
@@ -64,9 +66,15 @@ def process_file(file_url: str, force=False) -> Tuple[str, Tuple[str, str]]:
         with open(f"{path}/{original}", "w") as original_file:
             original_file.write(file_content)
 
-        convert_file(f"{path}/{original}", f"{path}/{converted}")
+        output = convert_file(f"{path}/{original}", f"{path}/{converted}")
+        with open(f"{path}/output", "w") as summary_output:
+            summary_output.write('\n'.join(output))
 
-    return path, (original, converted)
+    else:
+        with open(f"{path}/output") as summary_output:
+            output = summary_output.readlines()
+
+    return path, (original, converted), output
 
 
 @app.route("/")
@@ -119,7 +127,12 @@ def catch_all(path):
         return "Currently we only support `.py` and `.ipynb` files."
 
     try:
-        folder, files = process_file(path)
+        folder, files, summary = process_file(path)
+
+        if 'ERROR' in summary:
+            print('='*10, 'ERROR!')
+        for line in summary:
+            print(line)
 
         url = f"/d/diff?base={folder}/{files[0]}&remote={folder}/{files[1]}"
         print(url)

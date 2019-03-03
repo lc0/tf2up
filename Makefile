@@ -9,7 +9,7 @@ HELM := $(shell which helm)
 
 
 .PHONY: build
-build:
+build: lint
 	docker build -t ${DOCKER_REPO}:${TAG} .
 
 .PHONY: run
@@ -48,3 +48,8 @@ nbrun:
 .PHONY: nbpush
 nbpush:
 	gcloud docker -- push ${DOCKER_REPO}.nbdime:${TAG}
+
+# ===== lint
+.PHONY: lint
+lint:
+	mypy --config-file=configs/mypy.ini src/main.py
