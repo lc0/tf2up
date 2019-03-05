@@ -126,7 +126,7 @@ def proxy(path):
             return content
 
     except urllib.error.URLError as error:
-        print(f"ERROR {error}")
+        print(f"ERROR {error} by requesting url - {url}")
         return "Something went wrong, can not proxy"
 
 
@@ -140,6 +140,17 @@ def proxy_api(path):
     try:
         payload = json.dumps(request.json).encode()
         headers = {'content-type': 'application/json'}
+
+        # dirty hack: seems like sometimes nbdime looses `content type`
+        # from `application/json` to `text/plain;charset=UTF-8`
+        if not request.json:
+            print(f"WARNING, somehow lost json payload {request.json}")
+
+            base = re.findall(r"base=([^\&]+)", request.referrer)[0]
+            remote = re.findall(r"remote=([^\&]+)", request.referrer)[0]
+            payload = json.dumps({'base': base, 'remote': remote})
+            payload = payload.replace('%2F', '/').encode('utf-8')
+
 
         req = urllib.request.Request(url,
                                      data=payload,
