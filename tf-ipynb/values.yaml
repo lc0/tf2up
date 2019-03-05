@@ -14,7 +14,7 @@ containers:
     pullPolicy: Always
     replicaCount: 1
     port: 80
-    tag: v40
+    tag: v41
 
   - name: nbdime
     repository: gcr.io/brainscode-140622/tf-ipynb.nbdime
