@@ -12,7 +12,8 @@ from typing import Tuple, List
 
 import requests
 
-from flask import Flask, redirect, request, render_template
+from flask import (
+    Flask, redirect, request, render_template, send_from_directory)
 app = Flask(__name__)
 
 Summary = List[str]
@@ -93,7 +94,9 @@ def inject_nbdime(content: str, folder_hash: str) -> str:
         return render_template("nbdime_inject.html",
                                before=content[:position],
                                report_lines=report_lines,
-                               after=content[position:])
+                               after=content[position:],
+                               folder=folder_hash,
+                               file='converted.ipynb')
     else:
         return content
 
@@ -102,6 +105,15 @@ def inject_nbdime(content: str, folder_hash: str) -> str:
 def hello():
     """Index page with intro info."""
     return render_template('index.html')
+
+
+@app.route('/download/<path:folder>/<path:filename>')
+def download(folder, filename):
+    """Allow to download files."""
+
+    # TODO: move all /notebooks to a single config
+    uploads = os.path.join('/notebooks/', folder)
+    return send_from_directory(directory=uploads, filename=filename)
 
 
 @app.route("/d/<path:path>", methods=['GET'])
