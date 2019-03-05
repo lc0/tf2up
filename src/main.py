@@ -120,8 +120,14 @@ def proxy(path):
 
         if b'notebooks' in content:
             folder_hash = re.findall(r"/notebooks\/([^\/]+)/", url)[0]
-            content = inject_nbdime(content.decode('utf-8'), folder_hash)
-            return content
+
+            try:
+                content = inject_nbdime(content.decode('utf-8'), folder_hash)
+                return content
+            except FileNotFoundError:
+                return ("The cache was invalidated meanwhile. "
+                        "Please start from submitting the URL again.")
+
         else:
             return content
 
