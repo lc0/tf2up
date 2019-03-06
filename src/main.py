@@ -12,7 +12,8 @@ from typing import Tuple, List
 
 import requests
 
-from flask import Flask, redirect, request, render_template
+from flask import (
+    Flask, redirect, request, render_template, send_from_directory)
 app = Flask(__name__)
 
 Summary = List[str]
@@ -93,7 +94,9 @@ def inject_nbdime(content: str, folder_hash: str) -> str:
         return render_template("nbdime_inject.html",
                                before=content[:position],
                                report_lines=report_lines,
-                               after=content[position:])
+                               after=content[position:],
+                               folder=folder_hash,
+                               file='converted.ipynb')
     else:
         return content
 
@@ -102,6 +105,15 @@ def inject_nbdime(content: str, folder_hash: str) -> str:
 def hello():
     """Index page with intro info."""
     return render_template('index.html')
+
+
+@app.route('/download/<path:folder>/<path:filename>')
+def download(folder, filename):
+    """Allow to download files."""
+
+    # TODO: move all /notebooks to a single config
+    uploads = os.path.join('/notebooks/', folder)
+    return send_from_directory(directory=uploads, filename=filename)
 
 
 @app.route("/d/<path:path>", methods=['GET'])
@@ -120,13 +132,19 @@ def proxy(path):
 
         if b'notebooks' in content:
             folder_hash = re.findall(r"/notebooks\/([^\/]+)/", url)[0]
-            content = inject_nbdime(content.decode('utf-8'), folder_hash)
-            return content
+
+            try:
+                content = inject_nbdime(content.decode('utf-8'), folder_hash)
+                return content
+            except FileNotFoundError:
+                return ("The cache was invalidated meanwhile. "
+                        "Please start from submitting the URL again.")
+
         else:
             return content
 
     except urllib.error.URLError as error:
-        print(f"ERROR {error}")
+        print(f"ERROR {error} by requesting url - {url}")
         return "Something went wrong, can not proxy"
 
 
@@ -140,6 +158,17 @@ def proxy_api(path):
     try:
         payload = json.dumps(request.json).encode()
         headers = {'content-type': 'application/json'}
+
+        # dirty hack: seems like sometimes nbdime looses `content type`
+        # from `application/json` to `text/plain;charset=UTF-8`
+        if not request.json:
+            print(f"WARNING, somehow lost json payload {request.json}")
+
+            base = re.findall(r"base=([^\&]+)", request.referrer)[0]
+            remote = re.findall(r"remote=([^\&]+)", request.referrer)[0]
+            payload = json.dumps({'base': base, 'remote': remote})
+            payload = payload.replace('%2F', '/').encode('utf-8')
+
 
         req = urllib.request.Request(url,
                                      data=payload,
