@@ -1,5 +1,7 @@
 [tf2up.ml](http://tf2up.ml) - TensorFlow 2.0 upgrader service
 ===
+<a href="http://tf2up.ml"><img src="./src/static/images/tf2.png" width="250"></a>
+
 Idea is to make upgrade process to <strong>TensorFlow</strong> 2.0 of your Jupyter notebooks even easier!<br>
 
 Bookmarklet
