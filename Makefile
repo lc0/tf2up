@@ -1,7 +1,7 @@
 
 DOCKER_REPO=gcr.io/brainscode-140622/tf-ipynb
-TAG=v34
-NBDIME_URL=http://localhost:81/d/
+TAG=v35
+NBDIME_URL=http://host.docker.internal:8081/d/
 # TODO: chart prefix
 CHART := tf-ipynb
 
@@ -44,7 +44,7 @@ nbbuild:
 nbrun:
 	docker run -it -p 8081:81 \
 		-v /tmp/notebooks:/notebooks \
-		-e FOO=${BAR} ${DOCKER_REPO}.nbdime:${TAG}
+		${DOCKER_REPO}.nbdime:${TAG}
 
 .PHONY: nbpush
 nbpush:

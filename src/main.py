@@ -1,6 +1,7 @@
 """Simple wrapper to upgrade the files by github URL"""
 
 import json
+import logging
 import os
 import re
 import shutil
@@ -16,15 +17,13 @@ from flask import (
     Flask, redirect, request, render_template, send_from_directory)
 app = Flask(__name__)
 
-Summary = List[str]
-
 
 def download_file(requested_url: str) -> str:
     """Download a file from github repository"""
 
     url = f"https://github.com/{requested_url.replace('blob', 'raw')}"
     resp = requests.get(url)
-    print(F"Requested URR: {requested_url}")
+    logging.info(F"Requested URL: {requested_url}")
 
     if resp.status_code != 200:
         raise ValueError
@@ -37,18 +36,18 @@ def convert_file(in_file: str, out_file: str) -> List[str]:
 
     comand = f"tf_upgrade_v2 --infile {in_file} --outfile {out_file}"
 
-    p = subprocess.Popen(comand,
-                         shell=True,
-                         stdout=subprocess.PIPE,
-                         stderr=subprocess.STDOUT)
-    result_bytes = p.stdout.readlines()
-    p.wait()
+    process = subprocess.Popen(comand,
+                               shell=True,
+                               stdout=subprocess.PIPE,
+                               stderr=subprocess.STDOUT)
+    result_bytes = process.stdout.readlines()
+    process.wait()
 
     result = [line.decode('utf-8') for line in result_bytes]
     return result
 
 
-def process_file(file_url: str, force=False) -> Tuple[str, Tuple[str, str], Summary]:
+def process_file(file_url: str) -> Tuple[str, Tuple[str, str]]:
     """Process file with download, cache and upgrade."""
 
     _, file_ext = os.path.splitext(file_url)
@@ -73,11 +72,7 @@ def process_file(file_url: str, force=False) -> Tuple[str, Tuple[str, str], Summ
 
         shutil.copy('report.txt', f"{path}/report")
 
-    else:
-        with open(f"{path}/output") as summary_output:
-            output = summary_output.readlines()
-
-    return path, (original, converted), output
+    return path, (original, converted)
 
 
 def inject_nbdime(content: str, folder_hash: str) -> str:
@@ -85,20 +80,21 @@ def inject_nbdime(content: str, folder_hash: str) -> str:
     replace_token = "<h3>Notebook Diff</h3>"
     position = content.find(replace_token)
 
-    if position != -1:
-        path = f"/notebooks/{folder_hash}"
-        with open(f"{path}/report") as summary_output:
-            report_lines = [line for line in summary_output.readlines()
-                            if line.strip() != '']
-
-        return render_template("nbdime_inject.html",
-                               before=content[:position],
-                               report_lines=report_lines,
-                               after=content[position:],
-                               folder=folder_hash,
-                               file='converted.ipynb')
-    else:
+    # nothing to inject here, just return the content
+    if position == -1:
         return content
+
+    path = f"/notebooks/{folder_hash}"
+    with open(f"{path}/report") as summary_output:
+        report_lines = [line for line in summary_output.readlines()
+                        if line.strip() != '']
+
+    return render_template("nbdime_inject.html",
+                           before=content[:position],
+                           report_lines=report_lines,
+                           after=content[position:],
+                           folder=folder_hash,
+                           file='converted.ipynb')
 
 
 @app.route("/")
@@ -124,7 +120,7 @@ def proxy(path):
     params = '&'.join([f"{k}={v}" for k, v in request.values.items()])
     url = f"{nbdime_url}{path}?{params}"
 
-    print(f"URL: {url}")
+    logging.info(f"URL: {url}")
 
     try:
         response = urllib.request.urlopen(url)
@@ -144,7 +140,7 @@ def proxy(path):
             return content
 
     except urllib.error.URLError as error:
-        print(f"ERROR {error} by requesting url - {url}")
+        logging.error(f"ERROR: {error} by requesting url - {url}")
         return "Something went wrong, can not proxy"
 
 
@@ -162,7 +158,7 @@ def proxy_api(path):
         # dirty hack: seems like sometimes nbdime looses `content type`
         # from `application/json` to `text/plain;charset=UTF-8`
         if not request.json:
-            print(f"WARNING, somehow lost json payload {request.json}")
+            logging.warning(f"WARNING: somehow lost json payload {request.json}")
 
             base = re.findall(r"base=([^\&]+)", request.referrer)[0]
             remote = re.findall(r"remote=([^\&]+)", request.referrer)[0]
@@ -191,15 +187,9 @@ def catch_all(path):
         return "Currently we only support `.py` and `.ipynb` files."
 
     try:
-        folder, files, summary = process_file(path)
-
-        if 'ERROR' in summary:
-            print('='*10, 'ERROR!')
-        for line in summary:
-            print(line)
+        folder, files = process_file(path)
 
         url = f"/d/diff?base={folder}/{files[0]}&remote={folder}/{files[1]}"
-        print(url)
         return redirect(url, code=302)
 
     except ValueError:
