@@ -1,6 +1,6 @@
 
 DOCKER_REPO=gcr.io/brainscode-140622/tf-ipynb
-TAG=v34
+TAG=v35
 NBDIME_URL=http://localhost:81/d/
 # TODO: chart prefix
 CHART := tf-ipynb

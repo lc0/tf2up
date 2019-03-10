@@ -24,7 +24,7 @@ def download_file(requested_url: str) -> str:
 
     url = f"https://github.com/{requested_url.replace('blob', 'raw')}"
     resp = requests.get(url)
-    print(F"Requested URR: {requested_url}")
+    print(F"Requested URL: {requested_url}")
 
     if resp.status_code != 200:
         raise ValueError

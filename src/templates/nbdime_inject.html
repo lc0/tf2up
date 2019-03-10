@@ -23,4 +23,102 @@
     <a href="{{ url_for('download', folder=folder, filename=file) }}">Download 💾 upgraded file</a>
 </div>
 {{ after|safe }}
+<!-- Seems like with upgrade there are some styles generated separately
+TODO: figure out how to do this properly without hardcoding-->
+<style type="text/css">
+.CodeMirror-merge {
+  position: relative;
+  white-space: pre;
+  /* style as jp-InputArea-editor: */
+  border: var(--codemirror-border);
+  border-radius: 0px;
+  background: var(--jp-cell-editor-background);
+}
+
+.nbdime-root .CodeMirror.cm-s-jupyter {
+  background: transparent;
+}
+
+.CodeMirror-merge, .CodeMirror-merge .CodeMirror {
+  height: auto;
+}
+
+.CodeMirror-scroll {
+  max-height: calc(100vh - 4em);
+}
+
+.CodeMirror-merge-4pane .CodeMirror-merge-pane-deleted {
+  display: none;
+}
+
+.CodeMirror-merge-pane-unchanged { width: 100%; }
+.CodeMirror-merge-1pane .CodeMirror-merge-gap { width: 6%; }
+.CodeMirror-merge-2pane .CodeMirror-merge-pane { width: 47%; }
+.CodeMirror-merge-2pane .CodeMirror-merge-gap { width: 6%; }
+.CodeMirror-merge-3pane .CodeMirror-merge-pane { width: 31%; }
+.CodeMirror-merge-3pane .CodeMirror-merge-gap { width: 3.5%; }
+
+.CodeMirror-merge-pane {
+  display: inline-block;
+  white-space: normal;
+  vertical-align: top;
+  width: 100%;
+}
+.CodeMirror-merge-pane-rightmost {
+  position: absolute;
+  right: 0px;
+  z-index: 1;
+}
+
+.p-Widget.CodeMirror-merge-gap {
+  z-index: 2;
+  display: inline-block;
+  height: 100%;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-left: var(--codemirror-border);
+  border-right: var(--codemirror-border);
+  position: absolute;
+  color: var(--jp-ui-font-color2);
+  background: var(--jp-layout-color2);
+}
+
+.CodeMirror-merge-scrolllock-wrap {
+  position: absolute;
+  bottom: 0; left: 50%;
+}
+.CodeMirror-merge-scrolllock {
+  position: relative;
+  left: -50%;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.CodeMirror-merge-r-inserted, .CodeMirror-merge-l-inserted {
+    background-color: var(--jp-diff-added-color1);
+}
+
+.CodeMirror-merge-r-deleted, .CodeMirror-merge-l-deleted {
+    background-color: var(--jp-diff-deleted-color1);
+}
+
+.CodeMirror-merge-collapsed-widget:before {
+  content: "(...)";
+}
+.CodeMirror-merge-collapsed-widget {
+  cursor: pointer;
+  color: var(--jp-ui-font-color1);
+  background: var(--jp-layout-color2);
+  border: 1px solid var(--jp-border-color1);
+  font-size: 90%;
+  padding: 0 3px;
+  border-radius: 4px;
+}
+.CodeMirror-merge-collapsed-line .CodeMirror-gutter-elt { display: none; }
+
+.CodeMirror-merge-spacer {
+  background-image: repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(255,255,255,.5) 5px, rgba(255,255,255,.5) 10px);
+}
+</style>
 {% include 'data.html' %}
