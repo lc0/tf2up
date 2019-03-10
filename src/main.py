@@ -26,6 +26,7 @@ def download_file(requested_url: str) -> str:
     logging.info(F"Requested URL: {requested_url}")
 
     if resp.status_code != 200:
+        logging.info(f"Can not download {url}")
         raise ValueError
 
     return resp.text
@@ -196,8 +197,7 @@ def catch_all(path):
         url = f"/d/diff?base={folder}/{files[0]}&remote={folder}/{files[1]}"
         return redirect(url, code=302)
 
-    except ValueError as error:
-        logging.warning(f"Was not able to process {error}")
+    except ValueError:
         message = "Can not download the file. Please, check the URL"
         return render_template('error.html', message=message), 400
 
