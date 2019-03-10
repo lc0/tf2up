@@ -44,7 +44,7 @@ nbbuild:
 nbrun:
 	docker run -it -p 8081:81 \
 		-v /tmp/notebooks:/notebooks \
-		-e FOO=${BAR} ${DOCKER_REPO}.nbdime:${TAG}
+		${DOCKER_REPO}.nbdime:${TAG}
 
 .PHONY: nbpush
 nbpush:
