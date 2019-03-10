@@ -11,17 +11,19 @@ pods:
 containers:
   - name: ipynb
     repository: gcr.io/brainscode-140622/tf-ipynb
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     replicaCount: 1
     port: 80
-    tag: v45
+    healthcheck: /
+    tag: v47
 
   - name: nbdime
     repository: gcr.io/brainscode-140622/tf-ipynb.nbdime
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     replicaCount: 1
     port: 81
-    tag: v22
+    healthcheck: /d/
+    tag: v46
 
 
 nameOverride: ""

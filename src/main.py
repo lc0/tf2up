@@ -26,6 +26,7 @@ def download_file(requested_url: str) -> str:
     logging.info(F"Requested URL: {requested_url}")
 
     if resp.status_code != 200:
+        logging.info(f"Can not download {url}")
         raise ValueError
 
     return resp.text
@@ -58,7 +59,6 @@ def process_file(file_url: str) -> Tuple[str, Tuple[str, str]]:
     converted = f"converted{file_ext}"
 
     # TODO: delete the folder completely if `force`
-
     if not os.path.exists(path):
         file_content = download_file(file_url)
 
@@ -134,14 +134,16 @@ def proxy(path):
                 return content
             except FileNotFoundError:
                 return ("The cache was invalidated meanwhile. "
-                        "Please start from submitting the URL again.")
+                        "Please start by submitting the URL again.")
 
         else:
             return content
 
-    except urllib.error.URLError as error:
-        logging.error(f"ERROR: {error} by requesting url - {url}")
-        return "Something went wrong, can not proxy"
+    except urllib.error.URLError:
+        logging.error(f"Can not proxy nbdime for GET: {url}")
+        message = "Something went wrong, can not proxy nbdime"
+        return render_template('error.html', message=message), 502
+
 
 
 @app.route("/d/<path:path>", methods=['POST'])
@@ -174,7 +176,9 @@ def proxy_api(path):
         return resp.read()
 
     except urllib.error.URLError:
-        return "Something went wrong, can not proxy"
+        logging.error(f"Can not proxy nbdime for POST: {url}")
+        message = "Something went wrong, can not proxy nbdime"
+        return render_template('error.html', message=message), 502
 
 
 # TODO force refresh
@@ -184,7 +188,8 @@ def catch_all(path):
 
     # TODO: proper status codes
     if not (path.endswith('.py') or path.endswith('.ipynb')):
-        return "Currently we only support `.py` and `.ipynb` files."
+        message = "Currently we only support `.py` and `.ipynb` files."
+        return render_template('error.html', message=message), 501
 
     try:
         folder, files = process_file(path)
@@ -193,7 +198,8 @@ def catch_all(path):
         return redirect(url, code=302)
 
     except ValueError:
-        return "Can not download the file :( Are you sure the URL is correct?"
+        message = "Can not download the file. Please, check the URL"
+        return render_template('error.html', message=message), 400
 
 
 if __name__ == "__main__":
