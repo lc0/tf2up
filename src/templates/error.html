@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}
+tf2up.ml - TensorFlow 2.0 upgrader service, even easier upgrade to TensorFlow 2.0
+{% endblock %}
+
+
+{% block header %}
+<a class="logo" href="//tf2up.ml"><img src="/static/images/tf2.svg"></a>
+<style>
+    h3.error {
+        text-align: center;
+    }
+    .error span {
+        color: #e3592b;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h3 class="error"><span>Error:</span> {{ message}}<h3>
+{% endblock %}
