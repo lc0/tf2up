@@ -6,10 +6,5 @@ COPY nbdime/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY nbdime/original.ipynb .
-COPY nbdime/run.sh .
 
-COPY nbdime/hack.py .
-
-
-#CMD ["python", "-m", "nbdime.webapp.nbdimeserver", "--port=80", "--ip=0.0.0.0", "--log-level=DEBUG", "--base-url=/d/", "--config=/root/.jupyter/nbdime.json"]
-CMD ["python", "hack.py"]
+CMD ["nbdiff-web", "-p=81", "--ip=0.0.0.0", "--base-url=/d/", "original.ipynb", "original.ipynb"]
