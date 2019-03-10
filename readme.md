@@ -36,7 +36,7 @@ make nbrun
 ```
 Now you can run docker image with
 ```sh
-make run NBDIME_URL=http://host.docker.internal:8081/d/
+make run
 ```
 
 
