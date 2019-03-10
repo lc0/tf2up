@@ -1,6 +1,7 @@
 """Simple wrapper to upgrade the files by github URL"""
 
 import json
+import logging
 import os
 import re
 import shutil
@@ -24,7 +25,7 @@ def download_file(requested_url: str) -> str:
 
     url = f"https://github.com/{requested_url.replace('blob', 'raw')}"
     resp = requests.get(url)
-    print(F"Requested URL: {requested_url}")
+    logging.info(F"Requested URL: {requested_url}")
 
     if resp.status_code != 200:
         raise ValueError
@@ -124,7 +125,7 @@ def proxy(path):
     params = '&'.join([f"{k}={v}" for k, v in request.values.items()])
     url = f"{nbdime_url}{path}?{params}"
 
-    print(f"URL: {url}")
+    logging.info(f"URL: {url}")
 
     try:
         response = urllib.request.urlopen(url)
@@ -144,7 +145,7 @@ def proxy(path):
             return content
 
     except urllib.error.URLError as error:
-        print(f"ERROR {error} by requesting url - {url}")
+        logging.error(f"ERROR: {error} by requesting url - {url}")
         return "Something went wrong, can not proxy"
 
 
@@ -162,7 +163,7 @@ def proxy_api(path):
         # dirty hack: seems like sometimes nbdime looses `content type`
         # from `application/json` to `text/plain;charset=UTF-8`
         if not request.json:
-            print(f"WARNING, somehow lost json payload {request.json}")
+            logging.warning(f"WARNING: somehow lost json payload {request.json}")
 
             base = re.findall(r"base=([^\&]+)", request.referrer)[0]
             remote = re.findall(r"remote=([^\&]+)", request.referrer)[0]
@@ -193,13 +194,7 @@ def catch_all(path):
     try:
         folder, files, summary = process_file(path)
 
-        if 'ERROR' in summary:
-            print('='*10, 'ERROR!')
-        for line in summary:
-            print(line)
-
         url = f"/d/diff?base={folder}/{files[0]}&remote={folder}/{files[1]}"
-        print(url)
         return redirect(url, code=302)
 
     except ValueError:
