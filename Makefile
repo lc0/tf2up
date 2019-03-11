@@ -2,7 +2,6 @@
 DOCKER_REPO=gcr.io/brainscode-140622/tf-ipynb
 TAG=v35
 NBDIME_URL=http://host.docker.internal:8081/d/
-# TODO: chart prefix
 CHART := tf-ipynb
 
 HELM := $(shell which helm)

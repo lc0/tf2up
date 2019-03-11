@@ -47,8 +47,28 @@ def convert_file(in_file: str, out_file: str) -> List[str]:
     result = [line.decode('utf-8') for line in result_bytes]
     return result
 
+def save_ipynb_from_py(folder: str, py_filename: str) -> str:
+    """Save ipynb file based on python file"""
 
-def process_file(file_url: str) -> Tuple[str, Tuple[str, str]]:
+    full_filename = f"{folder}/{py_filename}"
+    with open(full_filename) as pyfile:
+        code_lines = [line.replace("\n", "\\n").replace('"', '\\"')
+                      for line in pyfile.readlines()]
+        pycode = '",\n"'.join(code_lines)
+
+    with open('template.ipynb') as template:
+        template_body = ''.join(template.readlines())
+
+    ipynb_code = template_body.replace('{{TEMPLATE}}', pycode)
+
+    new_filename = full_filename.replace('.py', '.ipynb')
+    with open(new_filename, "w") as ipynb_file:
+        ipynb_file.write(ipynb_code)
+
+    return py_filename.replace('.py', '.ipynb')
+
+
+def process_file(file_url: str) -> Tuple[str, Tuple[str, ...]]:
     """Process file with download, cache and upgrade."""
 
     _, file_ext = os.path.splitext(file_url)
@@ -71,6 +91,19 @@ def process_file(file_url: str) -> Tuple[str, Tuple[str, str]]:
             summary_output.write('\n'.join(output))
 
         shutil.copy('report.txt', f"{path}/report")
+
+        # found a python file, need to encode separately
+        if original.endswith('.py'):
+            result_filenames = []
+            for py_file in [original, converted]:
+                result_filenames.append(save_ipynb_from_py(path, py_file))
+
+            assert len(result_filenames) == 2
+            return path, tuple(result_filenames[:2])
+
+    if original.endswith('.py'):
+        return path, (original.replace('.py', '.ipynb'),
+                      converted.replace('.py', '.ipynb'))
 
     return path, (original, converted)
 
@@ -186,7 +219,6 @@ def proxy_api(path):
 def catch_all(path):
     """Endpoint for all URLs from Github"""
 
-    # TODO: proper status codes
     if not (path.endswith('.py') or path.endswith('.ipynb')):
         message = "Currently we only support `.py` and `.ipynb` files."
         return render_template('error.html', message=message), 501
