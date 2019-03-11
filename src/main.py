@@ -47,17 +47,19 @@ def convert_file(in_file: str, out_file: str) -> List[str]:
     result = [line.decode('utf-8') for line in result_bytes]
     return result
 
-def save_ipynb_from_py(folder: str, py_filename: str):
+def save_ipynb_from_py(folder: str, py_filename: str) -> str:
     """Save ipynb file based on python file"""
 
     full_filename = f"{folder}/{py_filename}"
     with open(full_filename) as pyfile:
-        pycode = '",\n"'.join(line.replace("\n", "\\n").replace('"', '\\"') for line in pyfile.readlines())
+        code_lines = [line.replace("\n", "\\n").replace('"', '\\"')
+                      for line in pyfile.readlines()]
+        pycode = '",\n"'.join(code_lines)
 
     with open('template.ipynb') as template:
-         template = ''.join(template.readlines())
+        template_body = ''.join(template.readlines())
 
-    ipynb_code = template.replace('{{TEMPLATE}}', pycode)
+    ipynb_code = template_body.replace('{{TEMPLATE}}', pycode)
 
     new_filename = full_filename.replace('.py', '.ipynb')
     with open(new_filename, "w") as ipynb_file:
@@ -66,7 +68,7 @@ def save_ipynb_from_py(folder: str, py_filename: str):
     return py_filename.replace('.py', '.ipynb')
 
 
-def process_file(file_url: str) -> Tuple[str, Tuple[str, str]]:
+def process_file(file_url: str) -> Tuple[str, Tuple[str, ...]]:
     """Process file with download, cache and upgrade."""
 
     _, file_ext = os.path.splitext(file_url)
@@ -96,7 +98,8 @@ def process_file(file_url: str) -> Tuple[str, Tuple[str, str]]:
             for py_file in [original, converted]:
                 result_filenames.append(save_ipynb_from_py(path, py_file))
 
-            return path, tuple(result_filenames)
+            assert len(result_filenames) == 2
+            return path, tuple(result_filenames[:2])
 
     if original.endswith('.py'):
         return path, (original.replace('.py', '.ipynb'),
