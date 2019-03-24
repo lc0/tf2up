@@ -36,3 +36,11 @@ nav ul li a, nav ul li span, header .action { display: block; padding: 0.5rem; }
         margin-left: auto;
         margin-right: auto;
 }
+
+#github-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        border: 0;
+        z-index: 42;
+}
