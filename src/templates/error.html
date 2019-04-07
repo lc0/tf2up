@@ -18,5 +18,6 @@ tf2up.ml - TensorFlow 2.0 upgrader service, even easier upgrade to TensorFlow 2.
 {% endblock %}
 
 {% block content %}
-<h3 class="error"><span>Error:</span> {{ message}}<h3>
+<h3 class="error"><span>Error:</span> {{ message }}</h3>
+{{ details|safe }}
 {% endblock %}
