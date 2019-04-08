@@ -18,6 +18,17 @@ from flask import (
 app = Flask(__name__)
 
 
+class NotebookDownloadException(Exception):
+    pass
+
+class ConvertionException(Exception):
+
+    def __init__(self, message, details):
+        self.message = message
+        self.details = details
+
+
+
 def download_file(requested_url: str) -> str:
     """Download a file from github repository"""
 
@@ -27,7 +38,7 @@ def download_file(requested_url: str) -> str:
 
     if resp.status_code != 200:
         logging.info(f"Can not download {url}")
-        raise ValueError
+        raise NotebookDownloadException("Can not download the file. Please, check the URL")
 
     return resp.text
 
@@ -45,6 +56,10 @@ def convert_file(in_file: str, out_file: str) -> List[str]:
     process.wait()
 
     result = [line.decode('utf-8') for line in result_bytes]
+    if process.returncode:
+        details = "<br>".join(result)
+        raise ConvertionException("Can not convert the file", details)
+
     return result
 
 def save_ipynb_from_py(folder: str, py_filename: str) -> str:
@@ -86,7 +101,12 @@ def process_file(file_url: str) -> Tuple[str, Tuple[str, ...]]:
         with open(f"{path}/{original}", "w") as original_file:
             original_file.write(file_content)
 
-        output = convert_file(f"{path}/{original}", f"{path}/{converted}")
+        try:
+            output = convert_file(f"{path}/{original}", f"{path}/{converted}")
+        except ConvertionException as error:
+            shutil.rmtree(path)
+            raise error
+
         with open(f"{path}/output", "w") as summary_output:
             summary_output.write('\n'.join(output))
 
@@ -229,9 +249,15 @@ def catch_all(path):
         url = f"/d/diff?base={folder}/{files[0]}&remote={folder}/{files[1]}"
         return redirect(url, code=302)
 
-    except ValueError:
-        message = "Can not download the file. Please, check the URL"
+    except NotebookDownloadException as error:
+        message = error.args[0]
         return render_template('error.html', message=message), 400
+
+    except ConvertionException as error:
+        logging.error(f"Can not convert for path {path}: {error.details}")
+        return render_template('error.html',
+                               message=error.message,
+                               details=error.details), 400
 
 
 if __name__ == "__main__":
