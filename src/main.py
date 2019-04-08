@@ -254,6 +254,7 @@ def catch_all(path):
         return render_template('error.html', message=message), 400
 
     except ConvertionException as error:
+        logging.error(f"Can not convert for path {path}: {error.details}")
         return render_template('error.html',
                                message=error.message,
                                details=error.details), 400
