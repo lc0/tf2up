@@ -12,6 +12,7 @@ from hashlib import md5
 from typing import Tuple, List
 
 import requests
+import tensorflow as tf
 
 from flask import (
     Flask, redirect, request, render_template, send_from_directory)
@@ -147,13 +148,15 @@ def inject_nbdime(content: str, folder_hash: str) -> str:
                            report_lines=report_lines,
                            after=content[position:],
                            folder=folder_hash,
-                           file='converted.ipynb')
+                           file='converted.ipynb',
+                           tf_version=tf.version.VERSION)
 
 
 @app.route("/")
 def hello():
     """Index page with intro info."""
-    return render_template('index.html')
+    return render_template('index.html',
+                           tf_version=tf.version.VERSION)
 
 
 @app.route('/download/<path:folder>/<path:filename>')
