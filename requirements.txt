@@ -1,4 +1,4 @@
 Twisted==16.6.0
 requests==2.20.1
-flask
-tf-nightly-2.0-preview
+Flask==1.0.2
+tf-nightly-2.0-preview>=2.0.0-dev20190427
