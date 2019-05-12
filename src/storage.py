@@ -1,7 +1,12 @@
+"A few utility functions to support persisting report data to cloud"
+
+from datetime import date
+
 from google.cloud import bigquery, storage
 
 # TODO: move this to config
 CLOUD_STORAGE_BUCKET = 'tf2up'
+GSC_FOLDER = 'reports'
 
 class Storage(object):
 
@@ -20,25 +25,22 @@ class Storage(object):
         self._gs_client = storage.Client(project=self.dataset_id)
 
     @staticmethod
-    def gen_filename(filename) -> str:
+    def gen_filename(filename: str, github_hash: str) -> str:
         """Generate a filename for GCS"""
+
+        today = date.today().isoformat()
+        filename = f"{GSC_FOLDER}/{today}_{github_hash}_report.txt"
 
         return filename
 
-    def save_file(self, filename):
+    def save_file(self, filename: str, github_hash: str):
         """Store file to GCS"""
 
-        remote_filename = Storage.gen_filename(filename)
+        remote_filename = Storage.gen_filename(filename, github_hash)
 
         bucket = self._gs_client.bucket(CLOUD_STORAGE_BUCKET)
         blob = bucket.blob(remote_filename)
-
         blob.upload_from_filename(filename)
-
-        # TODO: do we need explicitly specify
-        # upload_from_string to upload from bytestream
-        # blob.upload_from_string(file_stream, content_type=content_type)
-
 
     def _normalize_bq_file(self, file):
         """
@@ -70,5 +72,5 @@ class Storage(object):
 
 if __name__ == "__main__":
     storage = Storage(dataset_id='foo', table_id='bar')
-    storage.save_file('/srv/labs.brainscode/tf2up/cluster_setup/helm_init.sh')
+    storage.save_file('/srv/labs.brainscode/tf2up/cluster_setup/helm_init.sh', 'abs')
     print("All amazing so far")
