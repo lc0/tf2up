@@ -62,5 +62,7 @@ keys_update:
 # ===== lint
 .PHONY: lint
 lint:
-	mypy --config-file=configs/mypy.ini src/main.py
+	mypy \
+		--config-file=configs/mypy.ini \
+		src/ || true
 	pylint src/main.py

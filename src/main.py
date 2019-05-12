@@ -27,11 +27,18 @@ app = Flask(__name__)
 
 
 class NotebookDownloadException(Exception):
-    pass
+    """Notebook download exception"""
+
+    def __init__(self, message):
+        super(NotebookDownloadException, self).__init__(message)
+        self.message = message
 
 class ConvertionException(Exception):
+    """NBdime conversion exception"""
 
     def __init__(self, message, details):
+        super(ConvertionException, self).__init__(message)
+
         self.message = message
         self.details = details
 
