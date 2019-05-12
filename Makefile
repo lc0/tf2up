@@ -49,6 +49,13 @@ nbrun:
 nbpush:
 	gcloud docker -- push ${DOCKER_REPO}.nbdime:${TAG}
 
+# ===== GCP
+.PHONY: keys_update
+keys_update:
+	kubectl delete secret tf2up-key || true
+	kubectl create secret generic tf2up-key \
+		--from-file=google.json=cluster_setup/tf2up.json
+
 # ===== lint
 .PHONY: lint
 lint:
