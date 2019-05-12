@@ -16,7 +16,10 @@ build: #lint
 run:
 	docker run -it -p 8080:80 \
 		-v /tmp/notebooks:/notebooks \
-		-e NBDIME_URL=${NBDIME_URL} ${DOCKER_REPO}:${TAG}
+		-v "${PWD}"/cluster_setup/:/secrets \
+		-e NBDIME_URL=${NBDIME_URL} \
+		-e GOOGLE_APPLICATION_CREDENTIALS="/secrets/tf2up.json" \
+		${DOCKER_REPO}:${TAG}
 
 .PHONY: push
 push:
