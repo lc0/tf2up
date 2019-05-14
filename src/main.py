@@ -18,7 +18,7 @@ import tensorflow as tf
 import sys
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
-from storage import Storage
+from storage import FileStorage
 
 
 from flask import (
@@ -129,8 +129,8 @@ def process_file(file_url: str) -> Tuple[str, Tuple[str, ...]]:
 
         shutil.copy('report.txt', f"{path}/report")
 
-        # TODO: clean up this BQ legacy in init
-        storage = Storage(dataset_id='foo', table_id='bar')
+        # persist `report.txt` to GCS
+        storage = FileStorage()
         storage.save_file('report.txt', folder_hash)
 
         # found a python file, need to encode separately

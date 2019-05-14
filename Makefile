@@ -65,4 +65,5 @@ lint:
 	mypy \
 		--config-file=configs/mypy.ini \
 		src/ || true
+	@echo '========================================'
 	pylint src/main.py
