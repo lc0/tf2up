@@ -1,5 +1,8 @@
 [tf2up.ml](http://tf2up.ml) - TensorFlow 2.0 upgrader service
 ===
+> [![GitHub license](https://img.shields.io/github/license/lc0/tf2up.svg)](https://github.com/lc0/tf2up/blob/master/LICENSE)
+> [![Twitter](https://img.shields.io/twitter/url/https/github.com/lc0/tf2up.svg?style=social)](https://twitter.com/intent/tweet?hashtags=TensorFlow&original_referer=http%3A%2F%2Ftf2up.ml%2F&ref_src=twsrc%5Etfw&related=lc0d3r&text=http%3A%2F%2Ftf2up.ml%20-%20%40TensorFlow%202.0%20upgrader%20service%2C%20even%20easier%20upgrade%20to%20%23TensorFlow%202.0%20by%20%40lc0d3r&tw_p=tweetbutton&url=http%3A%2F%2Ftf2up.ml%2F)
+
 <a href="http://tf2up.ml"><img src="./src/static/images/tf2.png" width="250"></a>
 
 Idea is to make upgrade process to <strong>TensorFlow</strong> 2.0 of your Jupyter notebooks even easier!<br>
@@ -24,9 +27,9 @@ This project is standing on the shoulders of giants:
 
 Contributing
 ===
-In order run run locally:
+In order to run locally:
 
-Main part: we need to build docker image and run with local `NBDIME_URL`
+Main part: we need to build a docker image and run with local `NBDIME_URL`
 ```sh
 make build -e
 ```
@@ -34,7 +37,7 @@ Start nbdime container in a separate terminal
 ```sh
 make nbrun
 ```
-Now you can run docker image with
+Now you can run the docker image with
 ```sh
 make run
 ```
@@ -44,7 +47,7 @@ Kudos
 ===
 Thanks to all amazing people, that in one or another way helped this project:
 - [@DynamicWebPaige](https://twitter.com/DynamicWebPaige) for supporting and making TF community awesome
-- [Daria Korkuna](https://www.dariakorkuna.com/) for creating logo
+- [Daria Korkuna](https://www.dariakorkuna.com/) for creating the logo
 - [Martin Wicke](https://twitter.com/martin_wicke) for TF2, cake, and feedback
 - [Jerry Kurata](https://twitter.com/jerrykur) for testing the early versions of the upgrader</li>
 
