@@ -14,17 +14,31 @@ from typing import Tuple, List
 import requests
 import tensorflow as tf
 
+# TODO: install file properly with `pip install -e .`
+import sys
+sys.path.append(os.path.abspath(os.path.dirname(__file__)))
+
+from storage import FileStorage
+
+
 from flask import (
     Flask, redirect, request, render_template, send_from_directory)
 app = Flask(__name__)
 
 
 class NotebookDownloadException(Exception):
-    pass
+    """Notebook download exception"""
+
+    def __init__(self, message):
+        super(NotebookDownloadException, self).__init__(message)
+        self.message = message
 
 class ConvertionException(Exception):
+    """NBdime conversion exception"""
 
     def __init__(self, message, details):
+        super(ConvertionException, self).__init__(message)
+
         self.message = message
         self.details = details
 
@@ -44,6 +58,8 @@ def download_file(requested_url: str) -> str:
     return resp.text
 
 
+# TODO: Run conversion in temp folder,
+# so we do not have issues with concurrent conversion
 def convert_file(in_file: str, out_file: str) -> List[str]:
     """Upgrade file with tf_upgrade_v2."""
 
@@ -112,6 +128,10 @@ def process_file(file_url: str) -> Tuple[str, Tuple[str, ...]]:
             summary_output.write('\n'.join(output))
 
         shutil.copy('report.txt', f"{path}/report")
+
+        # persist `report.txt` to GCS
+        storage = FileStorage()
+        storage.save_file('report.txt', folder_hash)
 
         # found a python file, need to encode separately
         if original.endswith('.py'):

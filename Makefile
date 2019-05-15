@@ -16,7 +16,10 @@ build: #lint
 run:
 	docker run -it -p 8080:80 \
 		-v /tmp/notebooks:/notebooks \
-		-e NBDIME_URL=${NBDIME_URL} ${DOCKER_REPO}:${TAG}
+		-v "${PWD}"/cluster_setup/:/secrets \
+		-e NBDIME_URL=${NBDIME_URL} \
+		-e GOOGLE_APPLICATION_CREDENTIALS="/secrets/tf2up.json" \
+		${DOCKER_REPO}:${TAG}
 
 .PHONY: push
 push:
@@ -49,8 +52,18 @@ nbrun:
 nbpush:
 	gcloud docker -- push ${DOCKER_REPO}.nbdime:${TAG}
 
+# ===== GCP
+.PHONY: keys_update
+keys_update:
+	kubectl delete secret tf2up-key || true
+	kubectl create secret generic tf2up-key \
+		--from-file=google.json=cluster_setup/tf2up.json
+
 # ===== lint
 .PHONY: lint
 lint:
-	mypy --config-file=configs/mypy.ini src/main.py
+	mypy \
+		--config-file=configs/mypy.ini \
+		src/ || true
+	@echo '========================================'
 	pylint src/main.py
