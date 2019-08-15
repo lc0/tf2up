@@ -4,172 +4,23 @@ import json
 import logging
 import os
 import re
-import shutil
-import subprocess
 import urllib
-
-from hashlib import md5
-from typing import Tuple, List
-
-import requests
-import tensorflow as tf
 
 # TODO: install file properly with `pip install -e .`
 import sys
 sys.path.append(os.path.abspath(os.path.dirname(__file__)))
 
-from storage import FileStorage
+from conversion import inject_nbdime, process_file
+from conversion import NotebookDownloadException, ConvertionException
+
+
+import mistune
+import tensorflow as tf
 
 
 from flask import (
     Flask, redirect, request, render_template, send_from_directory)
 app = Flask(__name__)
-
-
-class NotebookDownloadException(Exception):
-    """Notebook download exception"""
-
-    def __init__(self, message):
-        super(NotebookDownloadException, self).__init__(message)
-        self.message = message
-
-class ConvertionException(Exception):
-    """NBdime conversion exception"""
-
-    def __init__(self, message, details):
-        super(ConvertionException, self).__init__(message)
-
-        self.message = message
-        self.details = details
-
-
-
-def download_file(requested_url: str) -> str:
-    """Download a file from github repository"""
-
-    url = f"https://github.com/{requested_url.replace('blob', 'raw')}"
-    resp = requests.get(url)
-    logging.info(F"Requested URL: {requested_url}")
-
-    if resp.status_code != 200:
-        logging.info(f"Can not download {url}")
-        raise NotebookDownloadException("Can not download the file. Please, check the URL")
-
-    return resp.text
-
-
-# TODO: Run conversion in temp folder,
-# so we do not have issues with concurrent conversion
-def convert_file(in_file: str, out_file: str) -> List[str]:
-    """Upgrade file with tf_upgrade_v2."""
-
-    comand = f"tf_upgrade_v2 --infile {in_file} --outfile {out_file}"
-
-    process = subprocess.Popen(comand,
-                               shell=True,
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.STDOUT)
-    result_bytes = process.stdout.readlines()
-    process.wait()
-
-    result = [line.decode('utf-8') for line in result_bytes]
-    if process.returncode:
-        details = "<br>".join(result)
-        raise ConvertionException("Can not convert the file", details)
-
-    return result
-
-def save_ipynb_from_py(folder: str, py_filename: str) -> str:
-    """Save ipynb file based on python file"""
-
-    full_filename = f"{folder}/{py_filename}"
-    with open(full_filename) as pyfile:
-        code_lines = [line.replace("\n", "\\n").replace('"', '\\"')
-                      for line in pyfile.readlines()]
-        pycode = '",\n"'.join(code_lines)
-
-    with open('template.ipynb') as template:
-        template_body = ''.join(template.readlines())
-
-    ipynb_code = template_body.replace('{{TEMPLATE}}', pycode)
-
-    new_filename = full_filename.replace('.py', '.ipynb')
-    with open(new_filename, "w") as ipynb_file:
-        ipynb_file.write(ipynb_code)
-
-    return py_filename.replace('.py', '.ipynb')
-
-
-def process_file(file_url: str) -> Tuple[str, Tuple[str, ...]]:
-    """Process file with download, cache and upgrade."""
-
-    _, file_ext = os.path.splitext(file_url)
-    folder_hash = md5(file_url.encode('utf-8')).hexdigest()
-
-    path = f"/notebooks/{folder_hash}"
-    original = f"original{file_ext}"
-    converted = f"converted{file_ext}"
-
-    # TODO: delete the folder completely if `force`
-    if not os.path.exists(path):
-        file_content = download_file(file_url)
-
-        os.mkdir(path)
-        with open(f"{path}/{original}", "w") as original_file:
-            original_file.write(file_content)
-
-        try:
-            output = convert_file(f"{path}/{original}", f"{path}/{converted}")
-        except ConvertionException as error:
-            shutil.rmtree(path)
-            raise error
-
-        with open(f"{path}/output", "w") as summary_output:
-            summary_output.write('\n'.join(output))
-
-        shutil.copy('report.txt', f"{path}/report")
-
-        # persist `report.txt` to GCS
-        storage = FileStorage()
-        storage.save_file('report.txt', folder_hash)
-
-        # found a python file, need to encode separately
-        if original.endswith('.py'):
-            result_filenames = []
-            for py_file in [original, converted]:
-                result_filenames.append(save_ipynb_from_py(path, py_file))
-
-            assert len(result_filenames) == 2
-            return path, tuple(result_filenames[:2])
-
-    if original.endswith('.py'):
-        return path, (original.replace('.py', '.ipynb'),
-                      converted.replace('.py', '.ipynb'))
-
-    return path, (original, converted)
-
-
-def inject_nbdime(content: str, folder_hash: str) -> str:
-    """Inject report strings before `nbdime`' diff"""
-    replace_token = "<h3>Notebook Diff</h3>"
-    position = content.find(replace_token)
-
-    # nothing to inject here, just return the content
-    if position == -1:
-        return content
-
-    path = f"/notebooks/{folder_hash}"
-    with open(f"{path}/report") as summary_output:
-        report_lines = [line for line in summary_output.readlines()
-                        if line.strip() != '']
-
-    return render_template("nbdime_inject.html",
-                           before=content[:position],
-                           report_lines=report_lines,
-                           after=content[position:],
-                           folder=folder_hash,
-                           file='converted.ipynb',
-                           tf_version=tf.version.VERSION)
 
 
 @app.route("/")
@@ -188,16 +39,15 @@ def download(folder, filename):
     return send_from_directory(directory=uploads, filename=filename)
 
 
-@app.route('/pages/<string:page>')
-def show_page(page):
+@app.route('/pages/<string:page_path>')
+def show_page(page_path):
     """Render custom pages like stats"""
 
-    import mistune
     renderer = mistune.Renderer(escape=False)
     markdown = mistune.Markdown(renderer=renderer)
 
     pages_folder = os.environ.get('PAGES_PATH', 'src/pages')
-    page_path = os.path.join(pages_folder, f"{page}.md")
+    page_path = os.path.join(pages_folder, f"{page_path}.md")
 
     if os.path.exists(page_path):
         with open(page_path) as page:
@@ -230,7 +80,9 @@ def proxy(path):
             folder_hash = re.findall(r"/notebooks\/([^\/]+)/", url)[0]
 
             try:
-                content = inject_nbdime(content.decode('utf-8'), folder_hash)
+                content = inject_nbdime(content.decode('utf-8'),
+                                        folder_hash,
+                                        tf_version=tf.version.VERSION)
                 return content
             except FileNotFoundError:
                 return ("The cache was invalidated meanwhile. "
