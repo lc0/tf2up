@@ -179,13 +179,37 @@ def hello():
                            tf_version=tf.version.VERSION)
 
 
-@app.route('/download/<path:folder>/<path:filename>')
+@app.route('/download/<string:folder>/<path:filename>')
 def download(folder, filename):
     """Allow to download files."""
 
     # TODO: move all /notebooks to a single config
     uploads = os.path.join('/notebooks/', folder)
     return send_from_directory(directory=uploads, filename=filename)
+
+
+@app.route('/pages/<string:page>')
+def show_page(page):
+    """Render custom pages like stats"""
+
+    import mistune
+    renderer = mistune.Renderer(escape=False)
+    markdown = mistune.Markdown(renderer=renderer)
+
+    PAGES_PATH = 'pages'
+    page_path = os.path.join(PAGES_PATH, f"{page}.md")
+
+    if os.path.exists(page_path):
+        with open(page_path) as page:
+            content = page.read()
+            rendered_content = markdown(content)
+
+            return render_template('page.html',
+                                   content=rendered_content)
+    else:
+        return render_template('error.html',
+                               message='Page not found',
+                               details='Did you try to check other pages?'), 404
 
 
 @app.route("/d/<path:path>", methods=['GET'])

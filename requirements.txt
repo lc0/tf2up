@@ -1,4 +1,4 @@
-Twisted==16.6.0
+Twisted==19.2.1
 requests==2.20.1
 Flask==1.0.2
 google-cloud-storage==1.13.0

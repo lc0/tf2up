@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}
+tf2up.ml - TensorFlow 2.0 upgrader service, even easier upgrade to TensorFlow 2.0
+{% endblock %}
+
+
+{% block header %}
+<a class="logo" href="//tf2up.ml"><img src="/static/images/tf2.svg"></a>
+<style>
+    h1 {
+        text-align: center;
+        }
+</style>
+{% endblock %}
+
+{% block content %}
+{{ content|safe }}
+{% endblock %}
