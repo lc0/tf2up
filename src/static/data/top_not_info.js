@@ -2,7 +2,7 @@ var top_not_info = {
   "config": {
     "view": {"width": 400, "height": 300},
     "mark": {"tooltip": null},
-    "axis": {"labelFontSize": 14, "labelLimit": 450}
+    "axis": {"labelFontSize": 14, "labelLimit": 440}
   },
   "data": {"name": "data-55da11cf97929d7e4401de1c47960665"},
   "mark": "bar",
