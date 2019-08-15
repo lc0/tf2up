@@ -196,8 +196,8 @@ def show_page(page):
     renderer = mistune.Renderer(escape=False)
     markdown = mistune.Markdown(renderer=renderer)
 
-    PAGES_PATH = 'pages'
-    page_path = os.path.join(PAGES_PATH, f"{page}.md")
+    pages_folder = os.environ.get('PAGES_PATH', 'src/pages')
+    page_path = os.path.join(pages_folder, f"{page}.md")
 
     if os.path.exists(page_path):
         with open(page_path) as page:

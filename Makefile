@@ -19,6 +19,7 @@ run:
 		-v "${PWD}"/cluster_setup/:/secrets \
 		-e NBDIME_URL=${NBDIME_URL} \
 		-e GOOGLE_APPLICATION_CREDENTIALS="/secrets/tf2up.json" \
+		-e PAGES_PATH="app/pages" \
 		${DOCKER_REPO}:${TAG}
 
 .PHONY: push
