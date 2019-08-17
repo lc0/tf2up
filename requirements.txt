@@ -1,4 +1,4 @@
-Twisted==19.2.1
+Twisted~=19.7.0
 requests==2.20.1
 mistune==0.8.4
 Flask==1.0.2
