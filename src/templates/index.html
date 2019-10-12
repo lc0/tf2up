@@ -31,9 +31,15 @@ Just copy and paste the ipynd notebook's url here
     function redirectToUrlFromInput(event){
         event.preventDefault(); 
         hostUrl = location.port.toString().length > 0 ? location.protocol+location.hostname +':'+ location.port : location.protocol+location.hostname ;
-        var notebookUrl = document.getElementById("notebookUrl").value.toString().replace(/.*github\.com\/(.*)/,hostUrl+'/\$1');
-        console.log(notebookUrl);
-        window.location.href = notebookUrl;
+        parsedUrl = document.getElementById("notebookUrl").value.toString();
+        if(parsedUrl.match(/.*github\.com\/(.*)/) !== null){
+            var notebookUrl = parsedUrl.replace(/.*github\.com\/(.*)/,hostUrl+'/\$1');
+            console.log(notebookUrl);
+            window.location.href = notebookUrl; 
+        }else{
+            alert("Please provide a GitHub url");
+        }
+        
         
     }
 </script>
