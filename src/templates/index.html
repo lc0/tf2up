@@ -24,7 +24,7 @@ Started as a conversation on Twitter:
 Just copy and paste the ipynd notebook's url here
 <form onsubmit="redirectToUrlFromInput(event)">
     <input id="notebookUrl" type="text">
-    <input type="submit" value="Convert">
+    <input id="submitUrlButton" type="submit" value="Convert">
 </form>
 <script>
     function redirectToUrlFromInput(event){
@@ -36,7 +36,7 @@ Just copy and paste the ipynd notebook's url here
         
     }
 </script>
-Just replace <code>https://github.com/</code> with <code>http://tf2up.ml</code>.
+Or just replace <code>https://github.com/</code> with <code>http://tf2up.ml</code>.
 For example, you would like to upgrade
 <code class="scrollable">http://github.com/tensorflow/docs/blob/master/site/en/tutorials/keras/save_and_restore_models.ipynb</code>
 you would need to replace url to
