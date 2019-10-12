@@ -2,3 +2,6 @@
 cluster_setup/
 .mypy_cache/
 .vscode/
+
+
+src/__pycache__/

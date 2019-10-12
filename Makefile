@@ -64,6 +64,6 @@ keys_update:
 lint:
 	mypy \
 		--config-file=configs/mypy.ini \
-		src/ || true
+		src/
 	@echo '========================================'
 	pylint src/main.py

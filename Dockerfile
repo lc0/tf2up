@@ -12,5 +12,6 @@ COPY nbdime/original.ipynb template.ipynb
 RUN pip install tf-nightly-2.0-preview
 
 ENV NBDIME_URL "http://localhost:81/d/"
+ENV PAGES_PATH "app/pages"
 
 CMD ["sh", "run.sh"]
