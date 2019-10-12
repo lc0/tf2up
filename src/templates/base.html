@@ -12,26 +12,29 @@
     <meta property="og:title" content="tf2up.ml - TensorFlow 2.0 upgrader service, even easier upgrade to TensorFlow 2.0" />
     <meta property="og:description" content="Idea is to make upgrade process to TensorFlow 2.0 of your Jupyter notebooks even easier! Just replace URL from Github to tf2up.ml or use bookmarklet to see the diff of upgrade" />
     <meta property="og:image" content="http://tf2up.ml/static/images/tf2.png" />
-</head>
-<title>{% block title %}{% endblock %}</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
-<!-- <nav>
-  <h1>tf2up.ml</h1>
-  <ul>
-    <li></li>
-  </ul>
-</nav> -->
-<a href="https://github.com/lc0/tf2up">
-  <img id="github-badge" alt="Fork me on GitHub" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" >
-</a>
-<section class="content">
-  <header>
-    {% block header %}{% endblock %}
-  </header>
-  {% for message in get_flashed_messages() %}
-    <div class="flash">{{ message }}</div>
-  {% endfor %}
-  {% block content %}{% endblock %}
-</section>
 
-{% include 'data.html' %}
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+</head>
+
+<body>
+  
+  <a href="https://github.com/lc0/tf2up">
+    <img id="github-badge" alt="Fork me on GitHub" src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" >
+  </a>
+
+  <section class="content">
+    <header>
+      {% block header %}{% endblock %}
+    </header>
+
+    {% for message in get_flashed_messages() %}
+    <div class="flash">{{ message }}</div>
+    {% endfor %}
+    
+    {% block content %}{% endblock %}
+  </section>
+  
+  {% include 'data.html' %}
+
+</body>
