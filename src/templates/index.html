@@ -21,6 +21,21 @@ Started as a conversation on Twitter:
 
 
 <h2><a href="#how">How</a></h2>
+Just copy and paste the ipynd notebook's url here
+<form onsubmit="redirectToUrlFromInput(event)">
+    <input id="notebookUrl" type="text">
+    <input type="submit" value="Convert">
+</form>
+<script>
+    function redirectToUrlFromInput(event){
+        event.preventDefault(); 
+        hostUrl = location.port.toString().length > 0 ? location.protocol+location.hostname +':'+ location.port : location.protocol+location.hostname ;
+        var notebookUrl = document.getElementById("notebookUrl").value.toString().replace(/.*github\.com\/(.*)/,hostUrl+'/\$1');
+        console.log(notebookUrl);
+        window.location.href = notebookUrl;
+        
+    }
+</script>
 Just replace <code>https://github.com/</code> with <code>http://tf2up.ml</code>.
 For example, you would like to upgrade
 <code class="scrollable">http://github.com/tensorflow/docs/blob/master/site/en/tutorials/keras/save_and_restore_models.ipynb</code>
