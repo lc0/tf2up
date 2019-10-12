@@ -22,9 +22,10 @@ Started as a conversation on Twitter:
 
 <h2><a href="#how">How</a></h2>
 Just copy and paste the ipynd notebook's url here
-<form onsubmit="redirectToUrlFromInput(event)">
+<form id="redirectToUrlForm" onsubmit="redirectToUrlFromInput(event)">
     <input id="notebookUrl" type="text">
-    <input id="submitUrlButton" type="submit" value="Convert">
+    <!-- <input id="submitUrlButton" type="submit" value="Convert"> -->
+    <button id="submitUrlButton" type="submit">Convert</button>
 </form>
 <script>
     function redirectToUrlFromInput(event){
