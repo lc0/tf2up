@@ -44,3 +44,17 @@ nav ul li a, nav ul li span, header .action { display: block; padding: 0.5rem; }
         border: 0;
         z-index: 42;
 }
+
+#notebookUrl{
+        font-size: 18px;
+        width: 90%;
+}
+
+#submitUrlButton{
+        font-size: 18px;
+        background-color:#cae6f6;
+}
+
+#redirectToUrlForm{
+        margin:1em;
+}
