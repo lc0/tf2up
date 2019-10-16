@@ -51,6 +51,15 @@ Thanks to all amazing people, that in one or another way helped this project:
 - [Martin Wicke](https://twitter.com/martin_wicke) for TF2, cake, and feedback
 - [Jerry Kurata](https://twitter.com/jerrykur) for testing the early versions of the upgrader</li>
 
+Citation
+===
+```
+@misc{sis,
+    author = {Sergii Khomenko},
+    title = {tf2up.ml: TensorFlow 2.0 upgrader service},
+    howpublished = {\url{https://github.com/lc0/tf2up}}
+}
+```
 
 ---
 > GitHub [@lc0](https://github.com/lc0) &nbsp;&middot;&nbsp;
