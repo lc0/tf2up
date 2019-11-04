@@ -3,4 +3,4 @@ requests==2.20.1
 mistune==0.8.4
 Flask==1.0.2
 google-cloud-storage==1.13.0
-tf-nightly-2.0-preview>=2.0.0-dev20190814
+tensorflow>=2.0.0
