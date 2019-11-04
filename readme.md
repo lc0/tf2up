@@ -48,13 +48,14 @@ Kudos
 Thanks to all amazing people, that in one or another way helped this project:
 - [@DynamicWebPaige](https://twitter.com/DynamicWebPaige) for supporting and making TF community awesome
 - [Daria Korkuna](https://www.dariakorkuna.com/) for creating the logo
+- [Jun Santos](https://github.com/santosjun) for frontend revamp
 - [Martin Wicke](https://twitter.com/martin_wicke) for TF2, cake, and feedback
 - [Jerry Kurata](https://twitter.com/jerrykur) for testing the early versions of the upgrader</li>
 
 Citation
 ===
 ```
-@misc{sis,
+@misc{tf2up,
     author = {Sergii Khomenko},
     title = {tf2up.ml: TensorFlow 2.0 upgrader service},
     howpublished = {\url{https://github.com/lc0/tf2up}}
