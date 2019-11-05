@@ -12,7 +12,7 @@ containers:
     replicaCount: 1
     port: 80
     healthcheck: /
-    tag: v61
+    tag: v62
 
   - name: nbdime
     repository: gcr.io/brainscode-140622/tf-ipynb.nbdime
