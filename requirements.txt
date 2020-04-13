@@ -1,6 +1,6 @@
-Twisted~=19.7.0
+Twisted>=20.3.0
 requests==2.20.1
 mistune==0.8.4
 Flask==1.0.2
 google-cloud-storage==1.13.0
-tensorflow>=2.0.0
+tensorflow-cpu

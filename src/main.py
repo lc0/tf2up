@@ -19,7 +19,9 @@ import tensorflow as tf
 
 
 from flask import (
-    Flask, redirect, request, render_template, send_from_directory)
+    Flask, redirect, request, render_template, send_from_directory,
+    make_response
+    )
 app = Flask(__name__)
 
 
@@ -28,6 +30,15 @@ def hello():
     """Index page with intro info."""
     return render_template('index.html',
                            tf_version=tf.version.VERSION)
+
+
+@app.route("/robots.txt")
+def robots():
+    """All pages for robots."""
+    resp = make_response(render_template('robots.txt'))
+    resp.headers['Content-type'] = 'text/txt; charset=utf-8'
+
+    return resp
 
 
 @app.route('/download/<string:folder>/<path:filename>')
