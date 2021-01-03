@@ -1,0 +1,6 @@
+# nbdime
+User-agent: *
+Disallow: /d/
+
+User-agent: *
+Allow: /
